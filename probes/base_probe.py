@@ -19,6 +19,13 @@ class Probe(ABC):
         pass
 
     @abstractmethod
+    def get_response_data(self):
+        """
+        Returns a dictionary of probe's response data
+        """
+        pass
+
+    @abstractmethod
     def analyze_response(self):
         """
         Analyzes the response and prints details.

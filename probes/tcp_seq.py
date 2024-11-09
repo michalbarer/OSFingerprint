@@ -20,19 +20,29 @@ class TCPSequenceProbe(Probe):
             {'window': 16, 'options': [('MSS', 536), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0)), ('WScale', 10), ('EOL', None)]},
             {'window': 512, 'options': [('MSS', 265), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0))]}
         ]
+        self.responses = []
+        self.isns = []
 
     def send_probe(self):
         """
-        Sends all six TCP probes.
+        Sends all six TCP probes and collects ISNs.
         """
-        self.responses = []
         for config in self.probe_configs:
             ip_packet = IP(dst=self.target_ip)
             tcp_packet = TCP(dport=self.target_port, flags="S", window=config['window'], options=config['options'])
             packet = ip_packet / tcp_packet
             response = sr1(packet, timeout=1, verbose=0)
+            if response and TCP in response:
+                # Collect the Initial Sequence Number (ISN)
+                self.isns.append(response[TCP].seq)
             self.responses.append(response)
             time.sleep(0.1)  # 100 ms delay between probes
+
+    def get_response_data(self):
+        """
+        Returns a dictionary of response data including ISNs.
+        """
+        return {"isns": self.isns}
 
     def analyze_response(self):
         for i, response in enumerate(self.responses, start=1):
@@ -40,3 +50,4 @@ class TCPSequenceProbe(Probe):
                 print(f"TCP Sequence Probe {i}: {response.summary()}")
             else:
                 print(f"TCP Sequence Probe {i} received no response.")
+

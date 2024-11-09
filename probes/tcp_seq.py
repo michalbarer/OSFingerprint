@@ -22,6 +22,7 @@ class TCPSequenceProbe(Probe):
         ]
         self.responses = []
         self.isns = []
+        self.timestamps = []
 
     def send_probe(self):
         """
@@ -35,6 +36,7 @@ class TCPSequenceProbe(Probe):
             if response and TCP in response:
                 # Collect the Initial Sequence Number (ISN)
                 self.isns.append(response[TCP].seq)
+                self.timestamps.append(time.time())
             self.responses.append(response)
             time.sleep(0.1)  # 100 ms delay between probes
 
@@ -42,7 +44,7 @@ class TCPSequenceProbe(Probe):
         """
         Returns a dictionary of response data including ISNs.
         """
-        return {"isns": self.isns}
+        return {"isns": self.isns, "timestamps": self.timestamps}
 
     def analyze_response(self):
         for i, response in enumerate(self.responses, start=1):

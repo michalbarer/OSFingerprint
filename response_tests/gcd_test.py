@@ -17,15 +17,31 @@ class TCPISNGCDTest(ResponseTest):
             print("Insufficient ISNs to analyze GCD")
             return None
 
-        # Calculate the differences between consecutive ISNs
-        differences = [abs(isns[i] - isns[i - 1]) for i in range(1, len(isns))]
+        # Maximum value for a 32-bit sequence number to account for wraparound
+        MAX_ISN_VALUE = 2 ** 32
 
-        if not differences:
+        # Step 1: Calculate diff1 array, handling wraparound
+        diff1 = []
+        for i in range(1, len(isns)):
+            # Calculate the difference between consecutive ISNs
+            isn_diff = isns[i] - isns[i - 1]
+
+            # Handle wraparound
+            if isn_diff < 0:
+                # Calculate the wraparound difference "up" and "down"
+                diff_up = isn_diff + MAX_ISN_VALUE
+                diff_down = -isn_diff
+                # Take the smaller absolute difference
+                isn_diff = min(diff_up, diff_down)
+
+            diff1.append(abs(isn_diff))
+
+        if not diff1:
             print("No differences calculated, unable to determine GCD")
             return None
 
-        # Calculate the GCD of all differences
-        gcd_result = reduce(gcd, differences)
+        # Step 2: Calculate the GCD of all differences in diff1
+        gcd_result = reduce(gcd, diff1)
 
         print(f"GCD of TCP ISN increments: {gcd_result}")
         return gcd_result

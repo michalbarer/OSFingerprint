@@ -4,6 +4,7 @@ from probes.tcp import TCPFlagProbe
 from probes.tcp_seq import TCPSequenceProbe
 from probes.upd import UDPProbe
 from response_tests.gcd_test import TCPISNGCDTest
+from response_tests.isr_test import TCPISNRateTest
 
 
 def main():
@@ -24,8 +25,10 @@ def main():
         probe.send_probe()
         probe.analyze_response()
         resp_data = probe.get_response_data()
-        test = TCPISNGCDTest(response_data=resp_data)
-        test.analyze()
+        gcd_test = TCPISNGCDTest(response_data=resp_data)
+        gcd_test.analyze()
+
+        TCPISNRateTest(response_data=resp_data).analyze()
 
 
 if __name__ == "__main__":

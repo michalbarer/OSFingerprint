@@ -7,6 +7,9 @@ class TCPISNRateTest(ResponseTest):
     """
     TCP ISN Counter Rate (ISR) Test.
     """
+    def __init__(self, response_data):
+        super().__init__(response_data)
+        self.max_isn_value = 2 ** 32
 
     def analyze(self):
         # Retrieve ISNs and timestamps from the response data
@@ -18,16 +21,13 @@ class TCPISNRateTest(ResponseTest):
             print("Insufficient data to analyze ISN rate.")
             return 0
 
-        # Maximum value for a 32-bit sequence number to account for wraparound
-        MAX_ISN_VALUE = 2**32
-
         # Step 1: Calculate ISN differences, handling wraparound, and store in diff1
         diff1 = []
         for i in range(1, len(isns)):
             isn_diff = isns[i] - isns[i - 1]
             # If the difference is negative, assume wraparound and adjust
             if isn_diff < 0:
-                isn_diff += MAX_ISN_VALUE
+                isn_diff += self.max_isn_value
             diff1.append(isn_diff)
 
         # Step 2: Calculate seq_rates by dividing each ISN difference by the time difference

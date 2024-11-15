@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from scapy.all import IP, TCP, ICMP, UDP, sr1
-import time
+
 
 class Probe(ABC):
     """

@@ -31,7 +31,21 @@ class ICMPEchoProbe(Probe):
             time.sleep(0.1)  # 100 ms delay between probes
 
     def get_response_data(self):
-        pass
+        response_data = {
+            "icmp_responses": [],
+            "response_received": any(self.responses),
+        }
+
+        for response in self.responses:
+            if response:
+                ip_layer = response.getlayer(IP)
+                response_data["icmp_responses"].append({
+                    "df": "DF" in ip_layer.flags,  # Extract the DF bit
+                })
+            else:
+                response_data["icmp_responses"].append(None)  # Mark missing response
+
+        return response_data
 
     def analyze_response(self):
         for i, response in enumerate(self.responses, start=1):

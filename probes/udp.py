@@ -16,7 +16,16 @@ class UDPProbe(Probe):
         self.response = sr1(packet, timeout=2, verbose=0)
 
     def get_response_data(self):
-        pass
+        if not self.response:
+            return {"response_received": False}
+
+        ip_layer = self.response.getlayer(IP)
+        return {
+            "ip": {
+                "flags": ip_layer.flags
+            },
+            "response_received": bool(self.response)
+        }
 
     def analyze_response(self):
         if self.response:

@@ -46,7 +46,7 @@ class TCPProbe(Probe):
             time.sleep(0.1)
 
     def get_response_data(self):
-        pass
+        return [{"response_received": bool(response)} for response in self.responses]
 
     def analyze_response(self):
         for i, response in enumerate(self.responses, start=2):

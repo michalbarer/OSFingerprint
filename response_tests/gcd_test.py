@@ -8,6 +8,9 @@ class TCPISNGCDTest(ResponseTest):
     """
     TCP ISN Greatest Common Divisor (GCD) Test.
     """
+    def __init__(self, response_data):
+        super().__init__(response_data)
+        self.max_isn_value = 2 ** 32
 
     def analyze(self):
         # Retrieve ISNs from the response data
@@ -16,9 +19,6 @@ class TCPISNGCDTest(ResponseTest):
         if not isns or len(isns) < 2:
             print("Insufficient ISNs to analyze GCD")
             return None
-
-        # Maximum value for a 32-bit sequence number to account for wraparound
-        MAX_ISN_VALUE = 2 ** 32
 
         # Step 1: Calculate diff1 array, handling wraparound
         diff1 = []
@@ -29,7 +29,7 @@ class TCPISNGCDTest(ResponseTest):
             # Handle wraparound
             if isn_diff < 0:
                 # Calculate the wraparound difference "up" and "down"
-                diff_up = isn_diff + MAX_ISN_VALUE
+                diff_up = isn_diff + self.max_isn_value
                 diff_down = -isn_diff
                 # Take the smaller absolute difference
                 isn_diff = min(diff_up, diff_down)

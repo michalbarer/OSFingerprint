@@ -1,3 +1,4 @@
+import os
 import time
 
 from scapy.layers.inet import IP, TCP
@@ -30,7 +31,13 @@ class TCPSequenceProbe(Probe):
         """
         for config in self.probe_configs:
             ip_packet = IP(dst=self.target_ip)
-            tcp_packet = TCP(dport=self.target_port, flags="S", window=config['window'], options=config['options'])
+            tcp_packet = TCP(dport=self.target_port,
+                             flags="S",
+                             window=config['window'],
+                             options=config['options'],
+                             seq=int.from_bytes(os.urandom(4), 'big'),  # Randomize sequence number
+                             ack=int.from_bytes(os.urandom(4), 'big')  # Randomize acknowledgment number
+                             )
             packet = ip_packet / tcp_packet
             response = sr1(packet, timeout=1, verbose=0)
             if response and TCP in response:

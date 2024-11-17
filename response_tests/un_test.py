@@ -20,4 +20,4 @@ class UnusedPortUnreachableFieldTest(ResponseTest):
             return None
 
         print(f"Unused Port Unreachable Field (UN): {unused_field}")
-        return unused_field
+        return hex(unused_field)

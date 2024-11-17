@@ -63,4 +63,4 @@ class TCPISNSequencePredictabilityTest(ResponseTest):
             sp = round(8 * math.log2(std_dev))
 
         print(f"TCP ISN Sequence Predictability Index (SP): {sp}")
-        return sp
+        return hex(sp)

@@ -53,4 +53,4 @@ class TCPISNRateTest(ResponseTest):
             isr = round(8 * math.log2(average_rate))
 
         print(f"TCP ISN Counter Rate (ISR): {isr}")
-        return isr
+        return hex(isr)

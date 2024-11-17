@@ -20,9 +20,9 @@ class TCPRSTDataChecksumTest(ResponseTest):
         if not data:
             # No data in the reset packet
             print("TCP RST Data Checksum (RD): 0")
-            return 0
+            return hex(0)
 
         # Compute CRC32 checksum for the data
         checksum = zlib.crc32(data) & 0xFFFFFFFF  # Ensure a 32-bit result
         print(f"TCP RST Data Checksum (RD): {checksum}")
-        return checksum
+        return hex(checksum)

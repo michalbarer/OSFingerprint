@@ -1,4 +1,4 @@
-from scapy.layers.inet import IP, UDP
+from scapy.layers.inet import IP, UDP, ICMP
 from scapy.sendrecv import sr1
 
 from probes.base_probe import Probe
@@ -13,19 +13,39 @@ class UDPProbe(Probe):
         udp_packet = UDP(dport=self.target_port)
         payload = b'C' * 300
         packet = ip_packet / udp_packet / payload
+        self.sent_ttl = packet[IP].ttl
         self.response = sr1(packet, timeout=2, verbose=0)
 
     def get_response_data(self):
-        if not self.response:
-            return {"response_received": False}
-
-        ip_layer = self.response.getlayer(IP)
-        return {
-            "ip": {
-                "flags": ip_layer.flags
-            },
-            "response_received": bool(self.response)
+        response_data = {
+            "response_received": bool(self.response),
+            "sent_ttl": self.sent_ttl,
+            "icmp_u1_response": None,
+            "ip_total_length": None,
+            "unused_field": None,
         }
+
+        if self.response:
+            ip_layer = self.response.getlayer(IP)
+            if ip_layer:
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["ip_total_length"] = ip_layer.len
+                response_data["ip_id"] = ip_layer.id
+                response_data["ip_checksum"] = ip_layer.chksum
+
+            # Check if the response is an ICMP message (port unreachable)
+            if self.response.haslayer(ICMP) and self.response.getlayer(ICMP).type == 3:
+                icmp_layer = self.response.getlayer(ICMP)
+                # Extract the last 4 bytes (unused field) from the ICMP header
+                unused_field = icmp_layer.payload[-4:] if len(icmp_layer.payload) >= 4 else b'\x00\x00\x00\x00'
+                response_data["unused_field"] = unused_field.hex()
+
+            udp_layer = self.response.getlayer(UDP)
+            if udp_layer:
+                response_data["udp_checksum"] = udp_layer.chksum
+                response_data["udp_payload"] = udp_layer.payload
+
+        return response_data
 
     def analyze_response(self):
         if self.response:

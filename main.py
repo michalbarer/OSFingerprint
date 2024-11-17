@@ -29,7 +29,7 @@ def main():
         response_tests = probe_to_test_mapping[probe.__class__.__name__]
         for test in response_tests:
             result = test(response_data=resp_data).analyze()
-            print(result)
+        print()
 
 
 if __name__ == "__main__":

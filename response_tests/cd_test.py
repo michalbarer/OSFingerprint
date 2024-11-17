@@ -12,11 +12,17 @@ class ICMPResponseCodeTest(ResponseTest):
         """
         Analyzes the ICMP response codes and computes the CD value.
         """
-        # Retrieve the ICMP response codes and probe codes from the response data
-        response_code_1 = self.response_data.get("response_code_1")
-        response_code_2 = self.response_data.get("response_code_2")
-        probe_code_1 = self.response_data.get("probe_code_1")
-        probe_code_2 = self.response_data.get("probe_code_2")
+        icmp_responses = self.response_data.get("icmp_responses", [])
+
+        if len(icmp_responses) < 2:
+            print("Insufficient ICMP responses available for analysis.")
+            return None
+
+        # Extract the codes and probe configuration
+        response_code_1 = icmp_responses[0].get("response_code") if icmp_responses[0] else None
+        response_code_2 = icmp_responses[1].get("response_code") if icmp_responses[1] else None
+        probe_code_1 = icmp_responses[0].get("probe_code") if icmp_responses[0] else None
+        probe_code_2 = icmp_responses[1].get("probe_code") if icmp_responses[1] else None
 
         if response_code_1 is None or response_code_2 is None:
             print("Insufficient ICMP response code data available for analysis.")

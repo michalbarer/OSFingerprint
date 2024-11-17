@@ -12,9 +12,9 @@ class IPInitialTTLGuessTest(ResponseTest):
         Analyzes the response data and guesses the initial TTL value.
         """
         # Retrieve the observed TTL from the response, if available
-        observed_ttl = self.response_data.get("observed_ttl")
+        icmp_response = self.response_data.get("icmp_u1_response")
+        observed_ttl = icmp_response["ttl"] if icmp_response else None
 
-        # If no TTL is observed, the guess is undefined
         if observed_ttl is None:
             print("No observed TTL available, unable to guess initial TTL.")
             return None

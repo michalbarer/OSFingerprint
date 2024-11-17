@@ -13,7 +13,7 @@ class ReturnedProbeIPTotalLengthTest(ResponseTest):
         Analyzes the returned IP total length value from the ICMP response.
         """
         # Retrieve the returned IP total length value from the response data
-        returned_length = self.response_data.get("returned_ip_total_length")
+        returned_length = self.response_data.get("ip_total_length")
 
         if returned_length is None:
             print("No returned IP total length data available for analysis.")

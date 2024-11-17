@@ -25,6 +25,7 @@ class ICMPEchoProbe(Probe):
             payload = bytes([0x00] * config["payload_size"])
             packet = ip_packet / icmp_packet / payload
 
+            self.sent_ttl = packet[IP].ttl
             response = sr1(packet, timeout=1, verbose=0)
 
             self.responses.append(response)
@@ -34,16 +35,26 @@ class ICMPEchoProbe(Probe):
         response_data = {
             "icmp_responses": [],
             "response_received": any(self.responses),
+            "sent_ttl": self.sent_ttl,
+            "icmp_u1_response": None,
         }
 
-        for response in self.responses:
+        for i, response in enumerate(self.responses):
             if response:
                 ip_layer = response.getlayer(IP)
+                icmp_layer = response.getlayer(ICMP)
+
                 response_data["icmp_responses"].append({
-                    "df": "DF" in ip_layer.flags,  # Extract the DF bit
+                    "df": "DF" in ip_layer.flags,
+                    "ttl": ip_layer.ttl,
+                    "probe_code": self.probe_configs[i]["code"],
+                    "response_code": icmp_layer.code if icmp_layer else None,
                 })
+
+                if not response_data["icmp_u1_response"]:
+                    response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
             else:
-                response_data["icmp_responses"].append(None)  # Mark missing response
+                response_data["icmp_responses"].append(None)
 
         return response_data
 

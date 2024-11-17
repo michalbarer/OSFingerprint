@@ -31,19 +31,47 @@ class ExplicitCongestionNotificationProbe(Probe):
             ]
         )
         packet = ip_packet / tcp_packet
+        self.sent_ttl = packet[IP].ttl
         self.response = sr1(packet, timeout=1, verbose=0)
 
     def get_response_data(self):
-        if not self.response:
-            return {"response_received": False}
-
-        ip_layer = self.response.getlayer(IP)
-        return {
-            "ip": {
-                "flags": ip_layer.flags
-            },
-            "response_received": bool(self.response)
+        response_data = {
+            "response_received": bool(self.response),
+            "sent_ttl": self.sent_ttl,
+            "icmp_u1_response": None,
+            "tcp_window_size": None,
+            "tcp_options": [],
+            "flags": None,
+            "reserved_field": 0,
+            "urgent_pointer": 0,
+            "urg_flag_set": False,
         }
+
+        if self.response:
+            ip_layer = self.response.getlayer(IP)
+            if ip_layer:
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+            if TCP in self.response:
+                tcp_layer = self.response[TCP]
+                response_data["tcp_window_size"] = tcp_layer.window
+
+                # Extract TCP options and add to response_data
+                for option in tcp_layer.options:
+                    if isinstance(option, tuple):
+                        response_data["tcp_options"].append(option)
+
+                response_data["flags"] = tcp_layer.flags
+
+                # Extract the reserved field (bits 7-4 of the data offset)
+                response_data["reserved_field"] = (tcp_layer.reserved >> 4) & 0x07
+
+                # Extract the urgent pointer and check if the URG flag is set
+                response_data["urgent_pointer"] = tcp_layer.urgptr
+                response_data["urg_flag_set"] = bool(
+                    tcp_layer.flags & 0x20
+                )  # Check if the URG flag is set (0x20 is the URG flag bit)
+
+        return response_data
 
     def analyze_response(self):
         if self.response and TCP in self.response:

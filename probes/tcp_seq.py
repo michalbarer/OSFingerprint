@@ -37,8 +37,6 @@ class TCPSequenceProbe(Probe):
                              flags="S",
                              window=config['window'],
                              options=config['options'],
-                             seq=int.from_bytes(os.urandom(4), 'big'),  # Randomize sequence number
-                             ack=int.from_bytes(os.urandom(4), 'big')  # Randomize acknowledgment number
                              )
             packet = ip_packet / tcp_packet
             self.sent_ttls.append(packet[IP].ttl)
@@ -80,7 +78,7 @@ class OPSProbe(TCPSequenceProbe):
         response_data = {}
 
         for i, response in enumerate(self.responses, start=1):
-            if TCP in response:
+            if response and TCP in response:
                 tcp_layer = response[TCP]
                 response_data[f"tcp_options_{i}"] = []
                 for option in tcp_layer.options:
@@ -96,7 +94,7 @@ class WINProbe(TCPSequenceProbe):
         response_data = {}
 
         for i, response in enumerate(self.responses, start=1):
-            if TCP in response:
+            if response and TCP in response:
                 tcp_layer = response[TCP]
                 response_data[f"tcp_window_size_{i}"] = tcp_layer.window
 
@@ -123,7 +121,7 @@ class T1Probe(TCPSequenceProbe):
             ip_layer = self.responses[0].getlayer(IP)
             if ip_layer:
                 response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
-            if TCP in self.response:
+            if TCP in self.responses[0]:
                 response = self.responses[0][TCP]
                 response_data["flags"] = response.flags
                 response_data["sequence_number"] = response.seq

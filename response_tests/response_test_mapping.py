@@ -39,16 +39,24 @@ T_TESTS = [ResponsivenessTest,
            TCPMiscellaneousQuirksTest]
 
 probe_to_test_mapping = {
-    "ExplicitCongestionNotificationProbe": [ResponsivenessTest,
-                                            IPDontFragmentTest,
-                                            IPInitialTTLTest,
-                                            IPInitialTTLGuessTest,
-                                            TCPInitialWindowSizeTest,
-                                            TCPOptionsTest,
-                                            ExplicitCongestionNotificationTest,
-                                            TCPMiscellaneousQuirksTest],
-    "ICMPEchoProbe": [ResponsivenessTest, ICMPDontFragmentTest],
-    "TCPProbe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest], # TODO: SPLIT TO T1-T7?
+    "ExplicitCongestionNotificationProbe": [
+        ResponsivenessTest,
+        IPDontFragmentTest,
+        IPInitialTTLTest,
+        IPInitialTTLGuessTest,
+        TCPInitialWindowSizeTest,
+        TCPOptionsTest,
+        ExplicitCongestionNotificationTest,
+        TCPMiscellaneousQuirksTest
+    ],
+    "ICMPEchoProbe": [
+        ResponsivenessTest,
+        ICMPDontFragmentTest,
+        IPInitialTTLTest,
+        IPInitialTTLGuessTest,
+        ICMPResponseCodeTest
+    ],
+    "TCPProbe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],  # TODO: SPLIT TO T1-T7?
     "TCPSequenceProbe": {
         "SEQ": [
             TCPISNSequencePredictabilityTest,
@@ -64,22 +72,19 @@ probe_to_test_mapping = {
         "WIN": [W1Test, W2Test, W3Test, W4Test, W5Test, W6Test],
         "T1": T_TESTS,
     },
-    "UDPProbe": [ResponsivenessTest,
-                 IPDontFragmentTest,
-                 IPInitialTTLTest,
-                 IPInitialTTLGuessTest,
-                 IPTotalLengthTest,
-                 UnusedPortUnreachableFieldTest,
-                 ReturnedProbeIPTotalLengthTest,
-                 ReturnedProbeIPIDValueTest,
-                 IntegrityReturnedIPChecksumTest,
-                 IntegrityReturnedUDPChecksumTest,
-                 IntegrityReturnedUDPDataTest],
-    "IMCPEchoProbe": [ResponsivenessTest,
-                      ICMPDontFragmentTest,
-                      IPInitialTTLTest,
-                      IPInitialTTLGuessTest,
-                      ICMPResponseCodeTest],
+    "UDPProbe": [
+        ResponsivenessTest,
+        IPDontFragmentTest,
+        IPInitialTTLTest,
+        IPInitialTTLGuessTest,
+        IPTotalLengthTest,
+        UnusedPortUnreachableFieldTest,
+        ReturnedProbeIPTotalLengthTest,
+        ReturnedProbeIPIDValueTest,
+        IntegrityReturnedIPChecksumTest,
+        IntegrityReturnedUDPChecksumTest,
+        IntegrityReturnedUDPDataTest
+    ],
 }
 
 # each line is called a test line

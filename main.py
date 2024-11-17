@@ -1,7 +1,8 @@
+from probes import T1Probe, T2Probe, T3Probe
 from probes.ecn import ExplicitCongestionNotificationProbe
 from probes.icmp_echo import ICMPEchoProbe
-from probes.tcp import TCPProbe
-from probes.tcp_seq import TCPSequenceProbe
+from probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe
+from probes.tcp_seq import SEQProbe, OPSProbe, WINProbe
 from probes.udp import UDPProbe
 from response_tests.response_test_mapping import probe_to_test_mapping
 
@@ -14,10 +15,18 @@ def main():
 
     # Run each probe type
     probes = [
-        # TCPSequenceProbe(target_ip, open_port),
+        SEQProbe(target_ip, open_port),
+        OPSProbe(target_ip, open_port),
+        WINProbe(target_ip, open_port),
+        T1Probe(target_ip, open_port),
         ICMPEchoProbe(target_ip),
         ExplicitCongestionNotificationProbe(target_ip, open_port),
-        # TCPProbe(target_ip, open_port, closed_port),
+        T2Probe(target_ip, open_port),
+        T3Probe(target_ip, open_port),
+        T4Probe(target_ip, open_port),
+        T5Probe(target_ip, closed_port),
+        T6Probe(target_ip, closed_port),
+        T7Probe(target_ip, closed_port),
         UDPProbe(target_ip, closed_port)
     ]
 

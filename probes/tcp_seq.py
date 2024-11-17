@@ -51,7 +51,11 @@ class TCPSequenceProbe(Probe):
         """
         Returns a dictionary of response data including ISNs.
         """
-        return {"isns": self.isns, "timestamps": self.timestamps}
+        return {
+            "isns": self.isns,
+            "timestamps": self.timestamps,
+            "response_received": any(self.responses)
+        }
 
     def analyze_response(self):
         for i, response in enumerate(self.responses, start=1):

@@ -23,7 +23,9 @@ class TCPSequenceProbe(Probe):
         ]
         self.responses = []
         self.isns = []
+        self.ip_ids = []
         self.timestamps = []
+        self.sent_ttls = []
 
     def send_probe(self):
         """
@@ -39,10 +41,12 @@ class TCPSequenceProbe(Probe):
                              ack=int.from_bytes(os.urandom(4), 'big')  # Randomize acknowledgment number
                              )
             packet = ip_packet / tcp_packet
+            self.sent_ttls.append(packet[IP].ttl)
             response = sr1(packet, timeout=1, verbose=0)
             if response and TCP in response:
                 # Collect the Initial Sequence Number (ISN)
                 self.isns.append(response[TCP].seq)
+                self.ip_ids.append(response[IP].id)
                 self.timestamps.append(time.time())
             self.responses.append(response)
             time.sleep(0.1)  # 100 ms delay between probes
@@ -79,4 +83,35 @@ class WINProbe(TCPSequenceProbe):
 
 class T1Probe(TCPSequenceProbe):
     """ TCP Sequence Probe T1 """
-    pass
+    def get_response_data(self):
+        response_data = {
+            "response_received": bool(self.responses[0]),
+            "ip": self.responses[0][IP] if self.responses[0] else None,
+            "flags": None,
+            "sent_ttl": self.sent_ttls[0],
+            "icmp_u1_response": None,
+            "sequence_number": None,
+            "ack_number": None,
+            "data": b"",
+            "reserved_field": 0,
+            "urgent_pointer": 0,
+            "urg_flag_set": False,
+        }
+
+        if self.responses[0]:
+            ip_layer = self.responses[0].getlayer(IP)
+            if ip_layer:
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+            if TCP in self.response:
+                response = self.responses[0][TCP]
+                response_data["flags"] = response.flags
+                response_data["sequence_number"] = response.seq
+                response_data["ack_number"] = response.ack
+                response_data["data"] = bytes(response.payload)
+                response_data["reserved_field"] = (response.reserved >> 4) & 0x07
+                response_data["urgent_pointer"] = response.urgptr
+                response_data["urg_flag_set"] = bool(
+                    response.flags & 0x20
+                )
+
+        return response_data

@@ -6,6 +6,12 @@ class TCPAndICMPIPIDSequenceBooleanTest(ResponseTest):
     Tests whether the IP ID sequence is shared between TCP and ICMP responses.
     This test is performed if the II test is RI, BI, or I, and the TI test indicates the same sequence.
     """
+    def __init__(self, icmp_response_data, tcp_response_data):
+        super().__init__(icmp_response_data)
+        self.response_data = {
+            "tcp_ip_ids": tcp_response_data.get("ip_ids", []),
+            "icmp_ip_ids": icmp_response_data.get("ip_ids", [])
+        }
 
     def analyze(self):
         tcp_ip_ids = self.response_data.get("tcp_ip_ids")

@@ -1,32 +1,34 @@
-from response_tests.a_test import TCPAcknowledgmentNumberTest
-from response_tests.cc_test import ExplicitCongestionNotificationTest
-from response_tests.cd_test import ICMPResponseCodeTest
-from response_tests.df_test import IPDontFragmentTest
-from response_tests.dfi_test import ICMPDontFragmentTest
-from response_tests.f_test import TCPFlagsTest
-from response_tests.gcd_test import TCPISNGCDTest
-from response_tests.ip_id_test.ci_test import TCPIIDCI
-from response_tests.ip_id_test.ii_test import ICMPIIDII
-from response_tests.ip_id_test.ss_test import TCPAndICMPIPIDSequenceBooleanTest
-from response_tests.ip_id_test.ti_test import TCPIIDTI
-from response_tests.ipl_test import IPTotalLengthTest
-from response_tests.isr_test import TCPISNRateTest
-from response_tests.o_tests import TCPOptionsTest, O1Test, O2Test, O3Test, O4Test, O5Test, O6Test
-from response_tests.q_test import TCPMiscellaneousQuirksTest
-from response_tests.r_test import ResponsivenessTest
-from response_tests.rd_test import TCPRSTDataChecksumTest
-from response_tests.rid_test import ReturnedProbeIPIDValueTest
-from response_tests.ripck_test import IntegrityReturnedIPChecksumTest
-from response_tests.ripl_test import ReturnedProbeIPTotalLengthTest
-from response_tests.ruck_test import IntegrityReturnedUDPChecksumTest
-from response_tests.rud_test import IntegrityReturnedUDPDataTest
-from response_tests.s_test import TCPSequenceNumberTest
-from response_tests.sp_test import TCPISNSequencePredictabilityTest
-from response_tests.t_test import IPInitialTTLTest
-from response_tests.tg_test import IPInitialTTLGuessTest
-from response_tests.ts_test import TCPTimestampOptionTest
-from response_tests.un_test import UnusedPortUnreachableFieldTest
-from response_tests.w_tests import TCPInitialWindowSizeTest, W1Test, W2Test, W3Test, W4Test, W5Test, W6Test
+from probes import ExplicitCongestionNotificationProbe
+from probes import ICMPEchoProbe
+from probes import TCPProbe, T2Probe, T3Probe, T4Probe, T5Probe, T6Probe, T7Probe
+from probes import T1Probe, TCPSequenceProbe, SEQProbe, WINProbe, OPSProbe
+from probes import UDPProbe
+from response_tests import TCPAcknowledgmentNumberTest
+from response_tests import ExplicitCongestionNotificationTest
+from response_tests import ICMPResponseCodeTest
+from response_tests import IPDontFragmentTest
+from response_tests import ICMPDontFragmentTest
+from response_tests import TCPFlagsTest
+from response_tests import TCPISNGCDTest
+from response_tests import TCPIIDCI, ICMPIIDII, TCPAndICMPIPIDSequenceBooleanTest, TCPIIDTI
+from response_tests import IPTotalLengthTest
+from response_tests import TCPISNRateTest
+from response_tests import TCPOptionsTest, O1Test, O2Test, O3Test, O4Test, O5Test, O6Test
+from response_tests import TCPMiscellaneousQuirksTest
+from response_tests import ResponsivenessTest
+from response_tests import TCPRSTDataChecksumTest
+from response_tests import ReturnedProbeIPIDValueTest
+from response_tests import IntegrityReturnedIPChecksumTest
+from response_tests import ReturnedProbeIPTotalLengthTest
+from response_tests import IntegrityReturnedUDPChecksumTest
+from response_tests import IntegrityReturnedUDPDataTest
+from response_tests import TCPSequenceNumberTest
+from response_tests import TCPISNSequencePredictabilityTest
+from response_tests import IPInitialTTLTest
+from response_tests import IPInitialTTLGuessTest
+from response_tests import TCPTimestampOptionTest
+from response_tests import UnusedPortUnreachableFieldTest
+from response_tests import TCPInitialWindowSizeTest, W1Test, W2Test, W3Test, W4Test, W5Test, W6Test
 
 T_TESTS = [ResponsivenessTest,
            IPDontFragmentTest,
@@ -39,7 +41,7 @@ T_TESTS = [ResponsivenessTest,
            TCPMiscellaneousQuirksTest]
 
 probe_to_test_mapping = {
-    "ExplicitCongestionNotificationProbe": [
+    ExplicitCongestionNotificationProbe: [
         ResponsivenessTest,
         IPDontFragmentTest,
         IPInitialTTLTest,
@@ -49,16 +51,25 @@ probe_to_test_mapping = {
         ExplicitCongestionNotificationTest,
         TCPMiscellaneousQuirksTest
     ],
-    "ICMPEchoProbe": [
+    ICMPEchoProbe: [
         ResponsivenessTest,
         ICMPDontFragmentTest,
         IPInitialTTLTest,
         IPInitialTTLGuessTest,
         ICMPResponseCodeTest
     ],
-    "TCPProbe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],  # TODO: SPLIT TO T1-T7?
-    "TCPSequenceProbe": {
-        "SEQ": [
+    TCPProbe:
+        {
+            T1Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+            T2Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+            T3Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+            T4Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+            T5Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+            T6Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+            T7Probe: T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest]
+        },
+    TCPSequenceProbe: {
+        SEQProbe: [
             TCPISNSequencePredictabilityTest,
             TCPISNGCDTest,
             TCPISNRateTest,
@@ -68,11 +79,11 @@ probe_to_test_mapping = {
             TCPAndICMPIPIDSequenceBooleanTest,
             TCPTimestampOptionTest
         ],
-        "OPS": [O1Test, O2Test, O3Test, O4Test, O5Test, O6Test],
-        "WIN": [W1Test, W2Test, W3Test, W4Test, W5Test, W6Test],
-        "T1": T_TESTS,
+        OPSProbe: [O1Test, O2Test, O3Test, O4Test, O5Test, O6Test],
+        WINProbe: [W1Test, W2Test, W3Test, W4Test, W5Test, W6Test],
+        T1Probe: T_TESTS,
     },
-    "UDPProbe": [
+    UDPProbe: [
         ResponsivenessTest,
         IPDontFragmentTest,
         IPInitialTTLTest,

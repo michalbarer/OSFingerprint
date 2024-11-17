@@ -60,3 +60,19 @@ class TCPSequenceProbe(Probe):
             else:
                 print(f"TCP Sequence Probe {i} received no response.")
 
+
+class SEQProbe(TCPSequenceProbe):
+    """ TCP Sequence Probe SEQ """
+    pass
+
+class OPSProbe(TCPSequenceProbe):
+    """ TCP Sequence Probe OPS """
+    pass
+
+class WINProbe(TCPSequenceProbe):
+    """ TCP Sequence Probe WIN """
+    pass
+
+class T1Probe(TCPSequenceProbe):
+    """ TCP Sequence Probe T1 """
+    pass

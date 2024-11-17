@@ -1,3 +1,5 @@
+from typing import Optional
+
 from response_tests.base_response_test import ResponseTest
 
 
@@ -7,12 +9,18 @@ class TCPOptionsTest(ResponseTest):
     Records the TCP header options in a packet while preserving the original order
     and providing information about option values.
     """
+    def __init__(self, response_data, index: Optional[int] = None):
+        super().__init__(response_data)
+        self.index = index
 
     def analyze(self):
         """
         Analyzes the TCP options from the response data.
         """
-        tcp_options = self.response_data.get("tcp_options", [])
+        key = "tcp_options"
+        if self.index:
+            key = f"tcp_options_{self.index}"
+        tcp_options = self.response_data.get(key, [])
 
         if not tcp_options:
             print("No TCP options data available for analysis.")
@@ -41,29 +49,41 @@ class TCPOptionsTest(ResponseTest):
 
 class O1Test(TCPOptionsTest):
     """TCP Options Test for Probe O1."""
-    pass
+
+    def __init__(self, response_data):
+        super().__init__(response_data, 1)
 
 
 class O2Test(TCPOptionsTest):
     """TCP Options Test for Probe O2."""
-    pass
+
+    def __init__(self, response_data):
+        super().__init__(response_data, 2)
 
 
 class O3Test(TCPOptionsTest):
     """TCP Options Test for Probe O3."""
-    pass
+
+    def __init__(self, response_data):
+        super().__init__(response_data, 3)
 
 
 class O4Test(TCPOptionsTest):
     """TCP Options Test for Probe O4."""
-    pass
+
+    def __init__(self, response_data):
+        super().__init__(response_data, 4)
 
 
 class O5Test(TCPOptionsTest):
     """TCP Options Test for Probe O5."""
-    pass
+
+    def __init__(self, response_data):
+        super().__init__(response_data, 5)
 
 
 class O6Test(TCPOptionsTest):
     """TCP Options Test for Probe O6."""
-    pass
+
+    def __init__(self, response_data):
+        super().__init__(response_data, 6)

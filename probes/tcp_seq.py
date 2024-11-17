@@ -75,11 +75,32 @@ class SEQProbe(TCPSequenceProbe):
 
 class OPSProbe(TCPSequenceProbe):
     """ TCP Sequence Probe OPS """
-    pass
+
+    def get_response_data(self):
+        response_data = {}
+
+        for i, response in enumerate(self.responses, start=1):
+            if TCP in response:
+                tcp_layer = response[TCP]
+                response_data[f"tcp_options_{i}"] = []
+                for option in tcp_layer.options:
+                    if isinstance(option, tuple):
+                        response_data[f"tcp_options_{i}"].append(option)
+
+        return response_data
 
 class WINProbe(TCPSequenceProbe):
     """ TCP Sequence Probe WIN """
-    pass
+
+    def get_response_data(self):
+        response_data = {}
+
+        for i, response in enumerate(self.responses, start=1):
+            if TCP in response:
+                tcp_layer = response[TCP]
+                response_data[f"tcp_window_size_{i}"] = tcp_layer.window
+
+        return response_data
 
 class T1Probe(TCPSequenceProbe):
     """ TCP Sequence Probe T1 """

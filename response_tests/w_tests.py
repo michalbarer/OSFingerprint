@@ -20,7 +20,7 @@ class TCPInitialWindowSizeTest(ResponseTest):
         if self.index:
             key = f"tcp_window_size_{self.index}"
 
-        tcp_window_size = self.response_data.get("tcp_window_size")
+        tcp_window_size = self.response_data.get(key)
 
         if tcp_window_size is None:
             print("No TCP window size data available for analysis.")

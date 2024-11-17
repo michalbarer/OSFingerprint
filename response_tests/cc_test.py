@@ -15,7 +15,7 @@ class ExplicitCongestionNotificationTest(ResponseTest):
         flags = self.response_data.get("flags")
 
         # Ensure that flags data is available
-        if flags is None:
+        if not flags:
             print("No flag data available, unable to determine ECN support.")
             return None
 

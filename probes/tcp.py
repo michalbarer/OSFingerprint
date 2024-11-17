@@ -14,6 +14,7 @@ class TCPProbe(Probe):
     def __init__(self, target_ip):
         super().__init__(target_ip)
         self.probe_config = {}
+        self.sent_ttl = None
 
     def send_probe(self):
         if self.probe_config:
@@ -31,13 +32,53 @@ class TCPProbe(Probe):
                 ]
             )
             packet = ip_packet / tcp_packet
+            self.sent_ttl = packet[IP].ttl
             self.response = sr1(packet, timeout=1, verbose=0)
             time.sleep(0.1)
 
     def get_response_data(self):
-        return {
-            "response_received": bool(self.response)
+        response_data = {
+            "response_received": bool(self.response),
+            "flags": None,
+            "sent_ttl": self.sent_ttl,
+            "icmp_u1_response": None,
+            "sequence_number": None,
+            "ack_number": None,
+            "data": b"",
+            "reserved_field": 0,
+            "urgent_pointer": 0,
+            "urg_flag_set": False,
+            "tcp_window_size": None,
+            "tcp_options": [],
         }
+
+        if self.response:
+            ip_layer = self.response.getlayer(IP)
+            if ip_layer:
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+            if TCP in self.response:
+                tcp_layer = self.response[TCP]
+                response_data["flags"] = tcp_layer.flags
+                response_data["sequence_number"] = tcp_layer.seq
+                response_data["ack_number"] = tcp_layer.ack
+                response_data["data"] = bytes(tcp_layer.payload)  # Extract raw data
+                response_data["tcp_window_size"] = tcp_layer.window
+
+                # Extract the reserved field (bits 7-4 of the data offset)
+                response_data["reserved_field"] = (tcp_layer.reserved >> 4) & 0x07
+
+                # Extract the urgent pointer and check if the URG flag is set
+                response_data["urgent_pointer"] = tcp_layer.urgptr
+                response_data["urg_flag_set"] = bool(
+                    tcp_layer.flags & 0x20
+                )  # Check if the URG flag is set (0x20 is the URG flag bit)
+
+                # Extract TCP options and add to response_data
+                for option in tcp_layer.options:
+                    if isinstance(option, tuple):
+                        response_data["tcp_options"].append(option)
+
+        return response_data
 
     def analyze_response(self):
         if self.response and TCP in self.response:

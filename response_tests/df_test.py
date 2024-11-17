@@ -7,12 +7,11 @@ class IPDontFragmentTest(ResponseTest):
     """
 
     def analyze(self):
-        if not self.response_data or "ip" not in self.response_data:
-            print("No IP header data found in response.")
-            return None
+        flags = self.response_data.get("flags")
 
-        ip_header = self.response_data.get("ip")
-        flags = ip_header.get("flags", "")
+        if not flags:
+            print("No flag data available, unable to determine ECN support.")
+            return None
 
         if "DF" in flags:
             print("IP DF bit is set (Y).")

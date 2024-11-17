@@ -11,14 +11,14 @@ def main():
     # Example usage
     target_ip = "ynet.co.il"
     open_port = 80
-    closed_port = 81
+    closed_port = 80
 
     # Run each probe type
     probes = [
-        SEQProbe(target_ip, open_port),
-        OPSProbe(target_ip, open_port),
-        WINProbe(target_ip, open_port),
-        T1Probe(target_ip, open_port),
+        # SEQProbe(target_ip, open_port),
+        # OPSProbe(target_ip, open_port),
+        # WINProbe(target_ip, open_port),
+        # T1Probe(target_ip, open_port),
         ICMPEchoProbe(target_ip),
         ExplicitCongestionNotificationProbe(target_ip, open_port),
         T2Probe(target_ip, open_port),

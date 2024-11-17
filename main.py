@@ -9,9 +9,9 @@ from response_tests.response_test_mapping import probe_to_test_mapping
 
 def main():
     # Example usage
-    target_ip = "ynet.co.il"
+    target_ip = "scanme.nmap.org"
     open_port = 80
-    closed_port = 80
+    closed_port = 1234
 
     # Run each probe type
     probes = [

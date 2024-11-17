@@ -22,7 +22,11 @@ class UDPProbe(Probe):
             "sent_ttl": self.sent_ttl,
             "icmp_u1_response": None,
             "ip_total_length": None,
+            "ip_id": None,
+            "ip_checksum": None,
             "unused_field": None,
+            "udp_checksum": None,
+            "udp_payload": None,
         }
 
         if self.response:
@@ -36,8 +40,12 @@ class UDPProbe(Probe):
             # Check if the response is an ICMP message (port unreachable)
             if self.response.haslayer(ICMP) and self.response.getlayer(ICMP).type == 3:
                 icmp_layer = self.response.getlayer(ICMP)
-                # Extract the last 4 bytes (unused field) from the ICMP header
-                unused_field = icmp_layer.payload[-4:] if len(icmp_layer.payload) >= 4 else b'\x00\x00\x00\x00'
+                icmp_payload = bytes(icmp_layer.payload)
+                # Extract the last 4 bytes of the ICMP header (unused field)
+                if len(icmp_payload) >= 4:
+                    unused_field = icmp_payload[-4:]  # Safely extract the last 4 bytes of payload
+                else:
+                    unused_field = b'\x00\x00\x00\x00'
                 response_data["unused_field"] = unused_field.hex()
 
             udp_layer = self.response.getlayer(UDP)

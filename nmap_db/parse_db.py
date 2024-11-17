@@ -98,3 +98,8 @@ if __name__ == "__main__":
     import pprint
 
     pprint.pprint(os_data)
+
+    python_file_path = "parsed_nmap_os_db.py"
+    with open(python_file_path, 'w') as py_file:
+        py_file.write("os_db = ")
+        py_file.write(str(os_data))

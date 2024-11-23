@@ -20,4 +20,4 @@ class IPTotalLengthTest(ResponseTest):
             return None
 
         print(f"IP Total Length (IPL): {ip_total_length}")
-        return hex(ip_total_length)
+        return ip_total_length

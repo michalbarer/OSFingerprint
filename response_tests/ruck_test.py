@@ -20,9 +20,9 @@ class IntegrityReturnedUDPChecksumTest(ResponseTest):
             return None
 
         if self.response_data.get("is_valid_udp_checksum", False):
-            result = "G"  # Good checksum # todo: Dafaq why do this?
+            result = "G"  # Good checksum #
         else:
             result = udp_checksum  # Return the actual checksum value
 
         print(f"Integrity of Returned Probe UDP Checksum Value (RUCK): {result}")
-        return hex(result) if result != "G" else result
+        return result

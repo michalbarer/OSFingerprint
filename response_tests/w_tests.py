@@ -27,7 +27,7 @@ class TCPInitialWindowSizeTest(ResponseTest):
             return None
 
         print(f"TCP Initial Window Size (W): {tcp_window_size}")
-        return hex(tcp_window_size)
+        return tcp_window_size
 
 
 class W1Test(TCPInitialWindowSizeTest):

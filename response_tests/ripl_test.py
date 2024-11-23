@@ -22,8 +22,8 @@ class ReturnedProbeIPTotalLengthTest(ResponseTest):
         # If the value is 0x148 (328), record 'G' for good
         if returned_length == 0x148:  # Hexadecimal 328
             print("Returned Probe IP Total Length (RIPL): G")
-            return "G" # todo: Dafaq why do this?
+            return "G"
 
         # Otherwise, record the actual returned value
         print(f"Returned Probe IP Total Length (RIPL): {returned_length}")
-        return hex(returned_length)
+        return returned_length

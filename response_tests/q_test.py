@@ -33,7 +33,7 @@ class TCPMiscellaneousQuirksTest(ResponseTest):
 
         # If no quirks are present, the Q test is empty but still shown
         if not quirks_string:
-            quirks_string = None
+            quirks_string = ""
 
         print(f"TCP Miscellaneous Quirks (Q) Result: {quirks_string}")
         return quirks_string

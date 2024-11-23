@@ -33,4 +33,4 @@ class IPInitialTTLTest(ResponseTest):
         initial_ttl = observed_ttl + hop_distance
 
         print(f"IP Initial Time-to-Live (T) Result: {initial_ttl}")
-        return hex(initial_ttl)
+        return initial_ttl

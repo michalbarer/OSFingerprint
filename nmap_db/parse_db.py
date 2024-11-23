@@ -1,5 +1,7 @@
 import re
 
+from utils.parsers import hex_str_int, NotHexadecimalError
+
 
 def parse_nmap_os_db(file_path):
     """
@@ -26,7 +28,7 @@ def parse_nmap_os_db(file_path):
         - List combining ranges and individual values
         """
         if not value:
-            return None  # Null value
+            return ""
 
         parts = value.split("|")  # Split into components by '|'
         parsed_parts = []
@@ -35,16 +37,13 @@ def parse_nmap_os_db(file_path):
             # Check if the part is a range
             if range_match := range_pattern.match(part):
                 start, end = range_match.groups()
-                if start.isdigit() and end.isdigit():
-                    parsed_parts.append((int(start), int(end)))  # Numeric range
-                else:
-                    parsed_parts.append((start.upper(), end.upper()))  # Hex range
-            # Check if the part is an integer
-            elif part.isdigit():
-                parsed_parts.append(int(part))
-            # Otherwise, treat as string
+                parsed_parts.append((hex_str_int(start), hex_str_int(end)))
+            # Check if hex or str
             else:
-                parsed_parts.append(part)
+                try:
+                    parsed_parts.append(hex_str_int(part))
+                except NotHexadecimalError:
+                    parsed_parts.append(part)
 
         # If there's only one item, return it directly; otherwise, return the list
         return parsed_parts[0] if len(parsed_parts) == 1 else parsed_parts

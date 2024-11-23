@@ -17,7 +17,7 @@ class IPInitialTTLGuessTest(ResponseTest):
 
         if observed_ttl is None:
             print("No observed TTL available, unable to guess initial TTL.")
-            return None # todo: check if should return 0
+            return None
 
         # Define common initial TTL values used by systems
         common_ttl_values = [32, 64, 128, 255]
@@ -26,8 +26,8 @@ class IPInitialTTLGuessTest(ResponseTest):
         for ttl in common_ttl_values:
             if observed_ttl <= ttl:
                 print(f"Guessed Initial TTL (TG): {ttl}")
-                return hex(ttl)
+                return ttl
 
         # If no match is found, return the maximum common TTL (255)
         print("Guessed Initial TTL (TG): 255")
-        return hex(255)
+        return 255

@@ -14,14 +14,13 @@ class TCPTimestampOptionTest(ResponseTest):
         timestamp_vals = self.response_data.get("timestamp_vals")  # List of TSval values from responses
         timestamps = self.response_data.get("timestamps")  # List of timestamps for each probe
 
-        # todo: decide how to parse the returned value. should it be a string?
         if len(timestamp_vals) < 2:
             print("Insufficient data for TS test")
             return "U"  # Unsupported if we don't have at least 2 responses with TSvals
 
         if any(ts == 0 for ts in timestamp_vals):
             print("TS test result: 0 (Zero timestamp)")
-            return "0"
+            return 0
 
         # Step 1: Calculate the rate of timestamp increments per second
         timestamp_rate = []

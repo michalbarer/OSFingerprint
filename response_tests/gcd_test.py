@@ -44,4 +44,4 @@ class TCPISNGCDTest(ResponseTest):
         gcd_result = reduce(gcd, diff1)
 
         print(f"GCD of TCP ISN increments: {gcd_result}")
-        return hex(gcd_result)
+        return gcd_result

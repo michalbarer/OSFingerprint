@@ -23,13 +23,13 @@ class ReturnedProbeIPIDValueTest(ResponseTest):
         # Check if the returned IP ID matches the expected static value (0x1042)
         if returned_ip_id == 0x1042:
             print("Returned Probe IP ID Value (RID): G")
-            return "G" # todo: Dafaq why do this?
+            return "G"
 
         # Check for systems that flip the bytes and return 0x4210
         if returned_ip_id == 0x4210:
             print(f"Returned Probe IP ID Value (RID): 0x4210 (flipped bytes)")
-            return 0x4210
+            return int(0x4210)
 
         # Otherwise, return the actual value
         print(f"Returned Probe IP ID Value (RID): {returned_ip_id}")
-        return hex(returned_ip_id)
+        return returned_ip_id

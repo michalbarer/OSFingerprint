@@ -1,4 +1,3 @@
-import os
 import time
 
 from scapy.layers.inet import IP, TCP
@@ -26,6 +25,7 @@ class TCPSequenceProbe(Probe):
         self.ip_ids = []
         self.timestamps = []
         self.sent_ttls = []
+        self.timestamp_vals = []
 
     def send_probe(self):
         """
@@ -42,12 +42,27 @@ class TCPSequenceProbe(Probe):
             self.sent_ttls.append(packet[IP].ttl)
             response = sr1(packet, timeout=1, verbose=0)
             if response and TCP in response:
-                # Collect the Initial Sequence Number (ISN)
                 self.isns.append(response[TCP].seq)
                 self.ip_ids.append(response[IP].id)
                 self.timestamps.append(time.time())
+                tcp_options = response[TCP].options
+                tsval = self._extract_tsval(tcp_options)
+                if tsval is not None:
+                    self.timestamp_vals.append(tsval)
             self.responses.append(response)
             time.sleep(0.1)  # 100 ms delay between probes
+
+    @staticmethod
+    def _extract_tsval(options):
+        """
+        Extracts the TSval (TCP timestamp value) from the TCP options.
+        :param options: TCP options list
+        :return: TSval if present, None otherwise
+        """
+        for opt in options:
+            if opt[0] == "Timestamp" and len(opt[1]) >= 1:
+                return opt[1][0]  # Return TSval (the first value in the Timestamp tuple)
+        return None
 
     def get_response_data(self):
         """
@@ -56,7 +71,9 @@ class TCPSequenceProbe(Probe):
         return {
             "isns": self.isns,
             "timestamps": self.timestamps,
-            "response_received": any(self.responses)
+            "response_received": any(self.responses),
+            "ip_ids": self.ip_ids,
+            "timestamp_vals": self.timestamp_vals
         }
 
     def analyze_response(self):

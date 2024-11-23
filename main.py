@@ -1,5 +1,4 @@
-from nmap_db.match_points import match_points
-from nmap_db.db_names_mapping import test_names_mapping, probes_mapping
+from nmap_db.query_db import calculate_os_score
 from probes import T1Probe, T2Probe, T3Probe
 from probes.ecn import ExplicitCongestionNotificationProbe
 from probes.icmp_echo import ICMPEchoProbe
@@ -11,7 +10,6 @@ from nmap_db.parsed_nmap_os_db import os_db
 
 
 def main():
-    # Example usage
     target_ip = "scanme.nmap.org"
     open_port = 80
     closed_port = 1234
@@ -22,15 +20,15 @@ def main():
         OPSProbe(target_ip, open_port),
         WINProbe(target_ip, open_port),
         T1Probe(target_ip, open_port),
-        # ICMPEchoProbe(target_ip),
-        # ExplicitCongestionNotificationProbe(target_ip, open_port),
-        # T2Probe(target_ip, open_port),
-        # T3Probe(target_ip, open_port),
-        # T4Probe(target_ip, open_port),
-        # T5Probe(target_ip, closed_port),
-        # T6Probe(target_ip, closed_port),
-        # T7Probe(target_ip, closed_port),
-        # UDPProbe(target_ip, closed_port)
+        ICMPEchoProbe(target_ip),
+        ExplicitCongestionNotificationProbe(target_ip, open_port),
+        T2Probe(target_ip, open_port),
+        T3Probe(target_ip, open_port),
+        T4Probe(target_ip, open_port),
+        T5Probe(target_ip, closed_port),
+        T6Probe(target_ip, closed_port),
+        T7Probe(target_ip, closed_port),
+        UDPProbe(target_ip, closed_port)
     ]
 
     all_results = {}
@@ -48,17 +46,21 @@ def main():
         print()
         all_results[probe.__class__.__name__] = probe_results
 
-    # import pprint
-    # pprint.pprint(all_results)
-    #
-    # # Calculate the scores for each OS
-    # os_scores = calculate_os_score(all_results, os_db)
-    #
-    # # Find the OS with the highest score
-    # best_os = max(os_scores, key=os_scores.get)
-    #
-    # print(f"The best matching OS is: {best_os} with a score of {os_scores[best_os]}")
+    import pprint
+    pprint.pprint(all_results)
+
+    # Calculate the scores for each OS
+    os_scores = calculate_os_score(all_results, os_db)
+
+    # Find the OS with the highest score
+    best_os = max(os_scores, key=os_scores.get)
+
+    print(f"The best matching OS is: {best_os} with a score of {os_scores[best_os]}")
 
 
 if __name__ == "__main__":
     main()
+
+# todo: Fix SEQ tests - maybe run dependencies inside probe
+# todo: Cast tests response and db to hex: DB in hex type (check if there are ints)
+# todo: project document

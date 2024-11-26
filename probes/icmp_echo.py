@@ -1,6 +1,6 @@
 import time
 
-from scapy.layers.inet import IP, ICMP
+from scapy.layers.inet import IP, ICMP, TCP
 from scapy.sendrecv import sr1
 
 from probes.base_probe import Probe
@@ -17,6 +17,7 @@ class ICMPEchoProbe(Probe):
             {"tos": 4, "code": 0, "seq_num": 296, "payload_size": 150},
         ]
         self.responses = []
+        self.ip_ids = []
 
     def send_probe(self):
         for config in self.probe_configs:
@@ -27,12 +28,17 @@ class ICMPEchoProbe(Probe):
 
             self.sent_ttl = packet[IP].ttl
             response = sr1(packet, timeout=1, verbose=0)
+            if response and TCP in response:
+                self.ip_ids.append(response[IP].id)
+            else:
+                self.ip_ids.append(None)
 
             self.responses.append(response)
-            time.sleep(0.1)  # 100 ms delay between probes
+            time.sleep(0.1)
 
     def get_response_data(self):
         response_data = {
+            "ip_ids": self.ip_ids,
             "icmp_responses": [],
             "response_received": any(self.responses),
             "sent_ttl": self.sent_ttl,

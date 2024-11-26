@@ -54,20 +54,21 @@ probe_to_test_mapping = {
         IPInitialTTLTest,
         IPInitialTTLGuessTest,
         ICMPResponseCodeTest,
-        ICMPIIDII
     ],
     "T2Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
     "T3Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
     "T4Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
-    "T5Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest, TCPIIDCI],
-    "T6Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest, TCPIIDCI],
-    "T7Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest, TCPIIDCI],
+    "T5Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+    "T6Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
+    "T7Probe": T_TESTS + [TCPInitialWindowSizeTest, TCPOptionsTest],
     "SEQProbe": [
         TCPISNGCDTest,
-        TCPISNSequencePredictabilityTest,
+        TCPISNSequencePredictabilityTest, # depends on GCD
         TCPISNRateTest,
         TCPIIDTI,
-        TCPAndICMPIPIDSequenceBooleanTest,
+        TCPIIDCI, # depends on T5-T7
+        ICMPIIDII, # depends on ICMP
+        TCPAndICMPIPIDSequenceBooleanTest, # depends on ICMP, TCP SEQ, II, TI
         TCPTimestampOptionTest
     ],
     "OPSProbe": [O1Test, O2Test, O3Test, O4Test, O5Test, O6Test],

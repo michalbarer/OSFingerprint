@@ -49,6 +49,8 @@ class TCPSequenceProbe(Probe):
                 tsval = self._extract_tsval(tcp_options)
                 if tsval is not None:
                     self.timestamp_vals.append(tsval)
+            else:
+                self.ip_ids.append(None)
             self.responses.append(response)
             time.sleep(0.1)  # 100 ms delay between probes
 

@@ -38,6 +38,7 @@ class TCPProbe(Probe):
 
     def get_response_data(self):
         response_data = {
+            "ip_id": None,
             "response_received": bool(self.response),
             "flags": None,
             "sent_ttl": self.sent_ttl,
@@ -53,6 +54,8 @@ class TCPProbe(Probe):
         }
 
         if self.response:
+            if "IP" in self.response:
+                response_data["ip_id"] = self.response["IP"].id
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
                 response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}

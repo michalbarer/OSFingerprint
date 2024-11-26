@@ -5,44 +5,80 @@ from probes.icmp_echo import ICMPEchoProbe
 from probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe
 from probes.tcp_seq import SEQProbe, OPSProbe, WINProbe
 from probes.udp import UDPProbe
-from response_tests import TCPISNGCDTest, TCPISNSequencePredictabilityTest, TCPISNRateTest, TCPIIDTI, \
-    TCPTimestampOptionTest
+from response_tests import TCPISNGCDTest, TCPISNSequencePredictabilityTest, TCPIIDTI, \
+    TCPIIDCI, ICMPIIDII, TCPAndICMPIPIDSequenceBooleanTest
 from response_tests.response_test_mapping import probe_to_test_mapping
 from nmap_db.parsed_nmap_os_db import os_db
 
 
-def main():
-    # target_ip = "scanme.nmap.org"
-    # open_port = 80
-    # closed_port = 1234
+def run_seq_probe_and_tests(target_ip, open_port, closed_port):
+    seq_probe = SEQProbe(target_ip, open_port)
+    seq_probe.send_probe()
+    seq_probe.analyze_response()
+    seq_response_data = seq_probe.get_response_data()
+    seq_probe_results = {}
+    response_tests = probe_to_test_mapping[seq_probe.__class__.__name__]
 
-    target_ip = "10.100.102.192"
-    open_port = 8075
-    closed_port = 1000
+    gcd_value = None
+    ti_value = None
+    ii_value = None
+    icmp_response_data = None
+
+    for test in response_tests:
+        if test == TCPISNSequencePredictabilityTest:
+            value = test(response_data=seq_response_data, gcd_value=gcd_value).analyze()
+        elif test == TCPIIDCI:
+            t_closed_ports = [T5Probe(target_ip, closed_port), T6Probe(target_ip, closed_port), T7Probe(target_ip, closed_port)]
+            t_probe_results = {
+                "closed_port_ipd_ids": []
+            }
+            for t_test in t_closed_ports:
+                t_test.send_probe()
+                ip_id = t_test.get_response_data()["ip_id"]
+                t_probe_results["closed_port_ipd_ids"].append(ip_id)
+
+            value = test(response_data=t_probe_results).analyze()
+        elif test == ICMPIIDII:
+            icmp_probe = ICMPEchoProbe(target_ip)
+            icmp_probe.send_probe()
+            icmp_response_data = icmp_probe.get_response_data()
+            value = test(response_data=icmp_response_data).analyze()
+        elif test == TCPAndICMPIPIDSequenceBooleanTest and icmp_response_data:
+            value = test(icmp_response_data=icmp_response_data,
+                         tcp_response_data=seq_response_data,
+                         ii_result=ii_value, ti_result=ti_value).analyze()
+        else:
+            value = test(response_data=seq_response_data).analyze()
+
+        if test == TCPISNGCDTest:
+            gcd_value = value
+        elif test == TCPIIDTI:
+            ti_value = value
+        elif test == ICMPIIDII:
+            ii_value = value
+
+        seq_probe_results[test.__name__] = value
+
+    return seq_probe_results
+
+
+
+def main():
+    target_ip = "scanme.nmap.org"
+    open_port = 80
+    closed_port = 1234
+
+    # target_ip = "10.100.102.192"
+    # open_port = 8075
+    # closed_port = 1000
 
     all_results = {}
-    # # Run seq probe:
-    # seq_probe = SEQProbe(target_ip, open_port)
-    # seq_probe.send_probe()
-    # seq_probe.analyze_response()
-    # print()
-    # response_tests = probe_to_test_mapping[seq_probe.__class__.__name__]
-    # seq_probe_results = {}
-    # seq_response_data = seq_probe.get_response_data()
-    # gcd_value = TCPISNGCDTest(response_data=seq_response_data).analyze()
-    # seq_probe_results[TCPISNGCDTest.__name__] = gcd_value
-    # sp_value = TCPISNSequencePredictabilityTest(response_data=seq_response_data, gcd_value=gcd_value).analyze()
-    # seq_probe_results[TCPISNSequencePredictabilityTest.__name__] = sp_value
-    # isr_value = TCPISNRateTest(response_data=seq_response_data).analyze()
-    # seq_probe_results[TCPISNRateTest.__name__] = isr_value
-    # ti_value =  TCPIIDTI(response_data=seq_response_data).analyze()
-    # seq_probe_results[TCPIIDTI.__name__] = ti_value
-    # ts_test = TCPTimestampOptionTest(response_data=seq_response_data).analyze()
-    # seq_probe_results[TCPTimestampOptionTest.__name__] = ts_test
-    # # TCPAndICMPIPIDSequenceBooleanTest
-    # all_results[seq_probe.__class__.__name__] = seq_probe_results
 
-    # Run each probe type
+    # Run SEQ probe:
+    seq_probe_results = run_seq_probe_and_tests(target_ip, open_port, closed_port)
+    all_results[SEQProbe.__name__] = seq_probe_results
+
+    # Run other probes
     probes = [
         OPSProbe(target_ip, open_port),
         WINProbe(target_ip, open_port),

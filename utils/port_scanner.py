@@ -15,6 +15,7 @@ def get_open_and_closed_port(host: str, ports: range) -> tuple[Optional[int], Op
                - The first open port (or None if none found)
                - The first closed port (or None if none found)
     """
+    # todo: this implementation is lacking - filtered ports are considered as closed ports
     open_port = None
     closed_port = None
 
@@ -34,7 +35,7 @@ def get_open_and_closed_port(host: str, ports: range) -> tuple[Optional[int], Op
 
 
 if __name__ == "__main__":
-    host = "scanme.nmap.org"
+    host = "ynet.co.il"
     ports = range(20, 1025)
     open_port, closed_port = get_open_and_closed_port(host, ports)
 

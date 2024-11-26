@@ -79,7 +79,7 @@ def main():
     seq_probe_results = run_seq_probe_and_tests(target_ip, open_port, closed_port)
     all_results[SEQProbe.__name__] = seq_probe_results
 
-    # Run other probes
+    # Run other probes:
     probes = [
         OPSProbe(target_ip, open_port),
         WINProbe(target_ip, open_port),

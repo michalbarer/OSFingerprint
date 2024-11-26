@@ -1,3 +1,4 @@
+import random
 import time
 
 from scapy.layers.inet import IP, TCP
@@ -10,14 +11,20 @@ class TCPSequenceProbe(Probe):
     """
     Sends the TCP Sequence Probes (SEQ, OPS, WIN, T1) for OS fingerprinting.
     """
+
     def __init__(self, target_ip, target_port):
         super().__init__(target_ip, target_port)
         self.probe_configs = [
-            {'window': 1, 'options': [('WScale', 10), ('NOP', None), ('MSS', 1460), ('Timestamp', (0xFFFFFFFF, 0)), ('SAckOK', b'')]},
-            {'window': 63, 'options': [('MSS', 1400), ('WScale', 0), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0)), ('EOL', None)]},
-            {'window': 4, 'options': [('Timestamp', (0xFFFFFFFF, 0)), ('NOP', None), ('NOP', None), ('WScale', 5), ('NOP', None), ('MSS', 640)]},
+            {'window': 1, 'options': [('WScale', 10), ('NOP', None), ('MSS', 1460), ('Timestamp', (0xFFFFFFFF, 0)),
+                                      ('SAckOK', b'')]},
+            {'window': 63,
+             'options': [('MSS', 1400), ('WScale', 0), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0)), ('EOL', None)]},
+            {'window': 4,
+             'options': [('Timestamp', (0xFFFFFFFF, 0)), ('NOP', None), ('NOP', None), ('WScale', 5), ('NOP', None),
+                         ('MSS', 640)]},
             {'window': 4, 'options': [('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0)), ('WScale', 10), ('EOL', None)]},
-            {'window': 16, 'options': [('MSS', 536), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0)), ('WScale', 10), ('EOL', None)]},
+            {'window': 16,
+             'options': [('MSS', 536), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0)), ('WScale', 10), ('EOL', None)]},
             {'window': 512, 'options': [('MSS', 265), ('SAckOK', b''), ('Timestamp', (0xFFFFFFFF, 0))]}
         ]
         self.responses = []
@@ -32,8 +39,10 @@ class TCPSequenceProbe(Probe):
         Sends all six TCP probes and collects ISNs.
         """
         for config in self.probe_configs:
+            src_port = random.randint(1024, 65535)
             ip_packet = IP(dst=self.target_ip)
-            tcp_packet = TCP(dport=self.target_port,
+            tcp_packet = TCP(sport=src_port,
+                             dport=self.target_port,
                              flags="S",
                              window=config['window'],
                              options=config['options'],
@@ -91,6 +100,7 @@ class SEQProbe(TCPSequenceProbe):
     """ TCP Sequence Probe SEQ """
     pass
 
+
 class OPSProbe(TCPSequenceProbe):
     """ TCP Sequence Probe OPS """
 
@@ -107,6 +117,7 @@ class OPSProbe(TCPSequenceProbe):
 
         return response_data
 
+
 class WINProbe(TCPSequenceProbe):
     """ TCP Sequence Probe WIN """
 
@@ -120,8 +131,10 @@ class WINProbe(TCPSequenceProbe):
 
         return response_data
 
+
 class T1Probe(TCPSequenceProbe):
     """ TCP Sequence Probe T1 """
+
     def get_response_data(self):
         response_data = {
             "response_received": bool(self.responses[0]),

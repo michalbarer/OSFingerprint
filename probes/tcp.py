@@ -86,11 +86,11 @@ class TCPProbe(Probe):
     def analyze_response(self):
         if self.response and TCP in self.response:
             tcp_layer = self.response[TCP]
-            print(f"TCP Flag Probe T{self.__class__.__name__}: {self.response.summary()}")
+            print(f"TCP Flag Probe {self.__class__.__name__}: {self.response.summary()}")
             print(f"  Flags: {tcp_layer.flags}")
             print(f"  Window Size: {tcp_layer.window}")
         else:
-            print(f"TCP Flag Probe T{self.__class__.__name__} received no response.")
+            print(f"TCP Flag Probe {self.__class__.__name__} received no response.")
 
 
 class T2Probe(TCPProbe):

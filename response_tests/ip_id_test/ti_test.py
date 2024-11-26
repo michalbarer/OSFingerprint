@@ -14,7 +14,6 @@ class TCPIIDTI(IPIDSequenceTest):
         Extracts IP IDs from TCP SEQ probe responses.
         """
         ip_ids = self.response_data.get("ip_ids", [])
-        ip_ids = [ip_id for ip_id in ip_ids if ip_id is not None]
 
         if len(ip_ids) < 3:
             print("TI Test: Insufficient responses (minimum 3 required).")

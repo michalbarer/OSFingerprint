@@ -43,14 +43,15 @@ class TCPSequenceProbe(Probe):
             response = sr1(packet, timeout=1, verbose=0)
             if response and TCP in response:
                 self.isns.append(response[TCP].seq)
-                self.ip_ids.append(response[IP].id)
                 self.timestamps.append(time.time())
                 tcp_options = response[TCP].options
                 tsval = self._extract_tsval(tcp_options)
                 if tsval is not None:
                     self.timestamp_vals.append(tsval)
-            else:
-                self.ip_ids.append(None)
+
+            if response and IP in response:
+                self.ip_ids.append(response[IP].id)
+
             self.responses.append(response)
             time.sleep(0.1)  # 100 ms delay between probes
 

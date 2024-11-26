@@ -14,7 +14,6 @@ class ICMPIIDII(IPIDSequenceTest):
         Extracts IP IDs from ICMP responses to IE ping probes.
         """
         icmp_ip_ids = self.response_data.get("ip_ids", [])
-        icmp_ip_ids = [ip_id for ip_id in icmp_ip_ids if ip_id is not None]
 
         if len(icmp_ip_ids) < 2:
             print("II Test: Insufficient ICMP responses (both required).")

@@ -35,7 +35,8 @@ def run_seq_probe_and_tests(target_ip, open_port, closed_port):
             for t_test in t_closed_ports:
                 t_test.send_probe()
                 ip_id = t_test.get_response_data()["ip_id"]
-                t_probe_results["closed_port_ipd_ids"].append(ip_id)
+                if ip_id:
+                    t_probe_results["closed_port_ipd_ids"].append(ip_id)
 
             value = test(response_data=t_probe_results).analyze()
         elif test == ICMPIIDII:

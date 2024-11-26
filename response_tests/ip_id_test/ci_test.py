@@ -14,7 +14,6 @@ class TCPIIDCI(IPIDSequenceTest):
         Extracts IP IDs from TCP probes sent to closed ports (T5, T6, T7).
         """
         closed_port_ipd_ids = self.response_data.get("closed_port_ipd_ids", [])
-        closed_port_ipd_ids = [ip_id for ip_id in closed_port_ipd_ids if ip_id is not None]
 
         if len(closed_port_ipd_ids) < 2:
             print("CI Test: Insufficient responses (minimum 2 required).") # todo: is 2 responses or 2 ip ids? e.g - 2 responses and 1 ip id

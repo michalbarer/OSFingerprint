@@ -5,7 +5,6 @@ class IPDontFragmentTest(ResponseTest):
     """
     Tests whether the IP Don't Fragment (DF) bit is set in the response.
     """
-
     def analyze(self):
         flags = self.response_data.get("flags")
 

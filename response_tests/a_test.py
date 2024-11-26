@@ -20,15 +20,14 @@ class TCPAcknowledgmentNumberTest(ResponseTest):
             print("Insufficient data: Acknowledgment or sequence number missing.")
             return None
 
-        # Compare acknowledgment number to sequence number
         if ack_number == 0:
-            result = "Z"  # Acknowledgment number is zero
+            result = "Z"
         elif ack_number == sequence_number:
-            result = "S"  # Acknowledgment number matches sequence number
+            result = "S"
         elif ack_number == sequence_number + 1:
-            result = "S+"  # Acknowledgment number matches sequence number + 1
+            result = "S+"
         else:
-            result = "O"  # Acknowledgment number is something else
+            result = "O"
 
         print(f"TCP Acknowledgment Number (A) Result: {result}")
         return result

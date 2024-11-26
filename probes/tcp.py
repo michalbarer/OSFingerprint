@@ -24,13 +24,14 @@ class TCPProbe(Probe):
                 flags=self.probe_config["flags"],
                 window=self.probe_config["window"],
                 options=[
-                    ("WScale", 15),
+                    ("WScale", 10),
                     ("NOP", None),
                     ("MSS", 265),
                     ("Timestamp", (0xFFFFFFFF, 0)),
                     ("SAckOK", b"")
                 ]
             )
+
             packet = ip_packet / tcp_packet
             self.sent_ttl = packet[IP].ttl
             self.response = sr1(packet, timeout=1, verbose=0)
@@ -77,10 +78,7 @@ class TCPProbe(Probe):
                 )  # Check if the URG flag is set (0x20 is the URG flag bit)
 
                 # Extract TCP options and add to response_data
-                for option in tcp_layer.options:
-                    if isinstance(option, tuple):
-                        response_data["tcp_options"].append(option)
-
+                response_data["tcp_options"] = tcp_layer.options
         return response_data
 
     def analyze_response(self):
@@ -98,7 +96,7 @@ class T2Probe(TCPProbe):
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
-        self.probe_configs = {"flags": "", "df": True, "window": 128, "port": self.open_port}
+        self.probe_config = {"flags": "", "df": True, "window": 128, "port": self.open_port}
 
 
 class T3Probe(TCPProbe):
@@ -106,7 +104,7 @@ class T3Probe(TCPProbe):
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
-        self.probe_configs = {"flags": "SFUP", "df": False, "window": 256, "port": self.open_port}
+        self.probe_config = {"flags": "SFUP", "df": False, "window": 256, "port": self.open_port}
 
 
 class T4Probe(TCPProbe):
@@ -114,7 +112,7 @@ class T4Probe(TCPProbe):
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
-        self.probe_configs = {"flags": "A", "df": True, "window": 1024, "port": self.open_port}
+        self.probe_config = {"flags": "A", "df": True, "window": 1024, "port": self.open_port}
 
 
 class T5Probe(TCPProbe):

@@ -14,7 +14,7 @@ class ReturnedProbeIPIDValueTest(ResponseTest):
         Analyzes the returned IP ID value from the ICMP response.
         """
         # Retrieve the returned IP ID value from the response data
-        returned_ip_id = self.response_data.get("ip_id")
+        returned_ip_id = self.response_data.get("returned_ip_id")
 
         if returned_ip_id is None:
             print("No returned IP ID data available for analysis.")

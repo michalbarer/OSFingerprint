@@ -8,6 +8,7 @@ class IPInitialTTLTest(ResponseTest):
     observed in the ICMP Port Unreachable response to the U1 probe.
     """
 
+    # todo: check implementation
     def analyze(self):
         """
         Analyzes the response to determine the initial TTL value.

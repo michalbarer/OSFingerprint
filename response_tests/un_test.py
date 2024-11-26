@@ -1,3 +1,5 @@
+import sys
+
 from response_tests.base_response_test import ResponseTest
 
 
@@ -20,4 +22,7 @@ class UnusedPortUnreachableFieldTest(ResponseTest):
             return None
 
         print(f"Unused Port Unreachable Field (UN): {unused_field}")
-        return unused_field
+        if unused_field == b'':
+            return 0
+        else:
+            return int.from_bytes(unused_field, sys.byteorder)

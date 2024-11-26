@@ -15,17 +15,18 @@ class IntegrityReturnedIPChecksumTest(ResponseTest):
         Analyzes the returned IP checksum value.
         """
         ip_checksum = self.response_data.get("ip_checksum")
+        returned_ip_checksum = self.response_data.get("returned_ip_checksum")
 
-        if ip_checksum is None:
+        if ip_checksum is None or returned_ip_checksum is None:
             print("No IP checksum data available for analysis.")
             return None
 
-        if ip_checksum == 0:
-            result = "Z"  # Zero checksum
-        elif self.response_data.get("is_valid_ip_checksum", False):
-            result = "G"  # Good checksum
+        if returned_ip_checksum == 0:
+            result = "Z"
+        elif returned_ip_checksum == ip_checksum:
+            result = "G"
         else:
-            result = "I"  # Invalid checksum
+            result = "I"
 
         print(f"Integrity of Returned Probe IP Checksum Value (RIPCK): {result}")
         return result

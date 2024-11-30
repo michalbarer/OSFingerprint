@@ -32,7 +32,7 @@ class ExplicitCongestionNotificationProbe(Probe):
         )
         packet = ip_packet / tcp_packet
         self.sent_ttl = packet[IP].ttl
-        self.response = sr1(packet, timeout=1, verbose=0)
+        self.response = sr1(packet, timeout=2, verbose=0)
 
     def get_response_data(self):
         response_data = {
@@ -60,16 +60,12 @@ class ExplicitCongestionNotificationProbe(Probe):
                     if isinstance(option, tuple):
                         response_data["tcp_options"].append(option)
 
-                response_data["flags"] = tcp_layer.flags
-
-                # Extract the reserved field (bits 7-4 of the data offset)
-                response_data["reserved_field"] = (tcp_layer.reserved >> 4) & 0x07
+                response_data["flags"] = str(tcp_layer.flags)
+                response_data["reserved_field"] = tcp_layer.reserved
 
                 # Extract the urgent pointer and check if the URG flag is set
                 response_data["urgent_pointer"] = tcp_layer.urgptr
-                response_data["urg_flag_set"] = bool(
-                    tcp_layer.flags & 0x20
-                )  # Check if the URG flag is set (0x20 is the URG flag bit)
+                response_data["urg_flag_set"] = "U" in str(tcp_layer.flags)
 
         return response_data
 

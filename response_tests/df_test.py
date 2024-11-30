@@ -6,15 +6,10 @@ class IPDontFragmentTest(ResponseTest):
     Tests whether the IP Don't Fragment (DF) bit is set in the response.
     """
     def analyze(self):
-        flags = self.response_data.get("flags")
+        is_df_flag_set = self.response_data.get("df_flag_set")
 
-        if not flags:
+        if not is_df_flag_set:
             print("No flag data available, unable to determine ECN support.")
             return None
 
-        if "DF" in flags:
-            print("IP DF bit is set (Y).")
-            return "Y"
-        else:
-            print("IP DF bit is not set (N).")
-            return "N"
+        return "Y" if is_df_flag_set else "N"

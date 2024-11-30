@@ -34,7 +34,7 @@ class TCPOptionsTest(ResponseTest):
             elif option[0] == "NOP":
                 option_string += "N"
             elif option[0] == "MSS":
-                option_string += f"M{option[1]}"
+                option_string += f"M{(option[1]):x}"
             elif option[0] == "WScale":
                 option_string += f"W{option[1]}"
             elif option[0] == "Timestamp":
@@ -44,6 +44,7 @@ class TCPOptionsTest(ResponseTest):
             elif option[0] == "SAckOK":
                 option_string += "S"
 
+        option_string = option_string.upper()
         print(f"TCP Options (O) String: {option_string}")
         return option_string
 

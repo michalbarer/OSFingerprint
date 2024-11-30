@@ -1,5 +1,5 @@
-import random
 import time
+import random
 
 from scapy.layers.inet import IP, TCP
 from scapy.sendrecv import sr1
@@ -33,6 +33,8 @@ class TCPSequenceProbe(Probe):
         self.timestamps = []
         self.sent_ttls = []
         self.timestamp_vals = []
+        self.seq = 0
+        self.ack = 0
 
     def send_probe(self):
         """
@@ -41,15 +43,18 @@ class TCPSequenceProbe(Probe):
         for config in self.probe_configs:
             src_port = random.randint(1024, 65535)
             ip_packet = IP(dst=self.target_ip)
-            tcp_packet = TCP(sport=src_port,
-                             dport=self.target_port,
-                             flags="S",
-                             window=config['window'],
-                             options=config['options'],
-                             )
+            tcp_packet = TCP(
+                sport=src_port,
+                dport=self.target_port,
+                flags="S",
+                window=config['window'],
+                options=config['options'],
+                seq=self.seq,
+                ack=self.ack
+            )
             packet = ip_packet / tcp_packet
             self.sent_ttls.append(packet[IP].ttl)
-            response = sr1(packet, timeout=1, verbose=0)
+            response = sr1(packet, timeout=2, verbose=0)
             if response and TCP in response:
                 self.isns.append(response[TCP].seq)
                 self.timestamps.append(time.time())
@@ -142,8 +147,10 @@ class T1Probe(TCPSequenceProbe):
             "flags": None,
             "sent_ttl": self.sent_ttls[0],
             "icmp_u1_response": None,
-            "sequence_number": None,
-            "ack_number": None,
+            "response_sequence_number": None,
+            "probe_sequence_number": self.seq,
+            "response_ack_number": None,
+            "probe_ack_number": self.ack,
             "data": b"",
             "reserved_field": 0,
             "urgent_pointer": 0,
@@ -156,14 +163,12 @@ class T1Probe(TCPSequenceProbe):
                 response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
             if TCP in self.responses[0]:
                 response = self.responses[0][TCP]
-                response_data["flags"] = response.flags
-                response_data["sequence_number"] = response.seq
-                response_data["ack_number"] = response.ack
+                response_data["flags"] = str(response.flags)
+                response_data["response_sequence_number"] = response.seq
+                response_data["response_ack_number"] = response.ack
                 response_data["data"] = bytes(response.payload)
-                response_data["reserved_field"] = (response.reserved >> 4) & 0x07
+                response_data["reserved_field"] = response.reserved
                 response_data["urgent_pointer"] = response.urgptr
-                response_data["urg_flag_set"] = bool(
-                    response.flags & 0x20
-                )
+                response_data["urg_flag_set"] = "U" in str(response.flags)
 
         return response_data

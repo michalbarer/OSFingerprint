@@ -13,19 +13,19 @@ class TCPSequenceNumberTest(ResponseTest):
         Analyzes the TCP sequence number field and determines its relationship to the acknowledgment number.
         """
         # Retrieve sequence and acknowledgment numbers from the response data
-        sequence_number = self.response_data.get("sequence_number")
-        ack_number = self.response_data.get("ack_number")
+        response_sequence_number = self.response_data.get("response_sequence_number")
+        probe_ack_number = self.response_data.get("probe_ack_number")
 
-        if sequence_number is None or ack_number is None:
+        if response_sequence_number is None or probe_ack_number is None:
             print("Insufficient data: Sequence or acknowledgment number missing.")
             return None
 
         # Compare sequence number to acknowledgment number
-        if sequence_number == 0:
+        if response_sequence_number == 0:
             result = "Z"  # Sequence number is zero
-        elif sequence_number == ack_number:
+        elif response_sequence_number == probe_ack_number:
             result = "A"  # Sequence number matches acknowledgment number
-        elif sequence_number == ack_number + 1:
+        elif response_sequence_number == probe_ack_number + 1:
             result = "A+"  # Sequence number matches acknowledgment number + 1
         else:
             result = "O"  # Sequence number is something else

@@ -1,3 +1,4 @@
+import random
 import time
 
 from scapy.layers.inet import IP, TCP
@@ -15,26 +16,17 @@ class TCPProbe(Probe):
         super().__init__(target_ip)
         self.probe_config = {}
         self.sent_ttl = None
+        self.src_port = random.randint(60000, 65535)
+        self.seq = 0
+        self.ack = 0
+        self.ip_packet = None
+        self.tcp_packet = None
 
     def send_probe(self):
-        if self.probe_config:
-            ip_packet = IP(dst=self.target_ip)
-            tcp_packet = TCP(
-                dport=self.probe_config["port"],
-                flags=self.probe_config["flags"],
-                window=self.probe_config["window"],
-                options=[
-                    ("WScale", 10),
-                    ("NOP", None),
-                    ("MSS", 265),
-                    ("Timestamp", (0xFFFFFFFF, 0)),
-                    ("SAckOK", b"")
-                ]
-            )
-
-            packet = ip_packet / tcp_packet
+        if self.ip_packet and self.tcp_packet:
+            packet = self.ip_packet / self.tcp_packet
             self.sent_ttl = packet[IP].ttl
-            self.response = sr1(packet, timeout=1, verbose=0)
+            self.response = sr1(packet, timeout=2, verbose=0)
             time.sleep(0.1)
 
     def get_response_data(self):
@@ -42,10 +34,13 @@ class TCPProbe(Probe):
             "ip_id": None,
             "response_received": bool(self.response),
             "flags": None,
+            "df_flag_set": None,
             "sent_ttl": self.sent_ttl,
             "icmp_u1_response": None,
-            "sequence_number": None,
-            "ack_number": None,
+            "response_sequence_number": None,
+            "probe_sequence_number": self.seq,
+            "response_ack_number": None,
+            "probe_ack_number": self.ack,
             "data": b"",
             "reserved_field": 0,
             "urgent_pointer": 0,
@@ -60,22 +55,19 @@ class TCPProbe(Probe):
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
                 response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["df_flag_set"] = ip_layer.flags.DF
             if TCP in self.response:
                 tcp_layer = self.response[TCP]
-                response_data["flags"] = tcp_layer.flags
-                response_data["sequence_number"] = tcp_layer.seq
-                response_data["ack_number"] = tcp_layer.ack
+                response_data["flags"] = str(tcp_layer.flags)
+                response_data["response_sequence_number"] = tcp_layer.seq
+                response_data["response_ack_number"] = tcp_layer.ack
                 response_data["data"] = bytes(tcp_layer.payload)  # Extract raw data
                 response_data["tcp_window_size"] = tcp_layer.window
-
-                # Extract the reserved field (bits 7-4 of the data offset)
-                response_data["reserved_field"] = (tcp_layer.reserved >> 4) & 0x07
+                response_data["reserved_field"] = tcp_layer.reserved
 
                 # Extract the urgent pointer and check if the URG flag is set
                 response_data["urgent_pointer"] = tcp_layer.urgptr
-                response_data["urg_flag_set"] = bool(
-                    tcp_layer.flags & 0x20
-                )  # Check if the URG flag is set (0x20 is the URG flag bit)
+                response_data["urg_flag_set"] = "U" in str(tcp_layer.flags)
 
                 # Extract TCP options and add to response_data
                 response_data["tcp_options"] = tcp_layer.options
@@ -96,7 +88,21 @@ class T2Probe(TCPProbe):
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
-        self.probe_config = {"flags": "", "df": True, "window": 128, "port": self.open_port}
+        self.ip_packet = IP(dst=self.target_ip, flags="DF")
+        self.tcp_packet = TCP(
+            sport=self.src_port + 2,
+            dport=self.open_port,
+            window=128,
+            options=[
+                ("WScale", 10),
+                ("NOP", None),
+                ("MSS", 265),
+                ("Timestamp", (0xFFFFFFFF, 0)),
+                ("SAckOK", "")
+            ],
+            seq=self.seq,
+            ack=self.ack
+        )
 
 
 class T3Probe(TCPProbe):
@@ -104,7 +110,22 @@ class T3Probe(TCPProbe):
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
-        self.probe_config = {"flags": "SFUP", "df": False, "window": 256, "port": self.open_port}
+        self.ip_packet = IP(dst=self.target_ip)
+        self.tcp_packet = TCP(
+            sport=self.src_port + 3,
+            dport=self.open_port,
+            flags="SFUP",
+            window=256,
+            options=[
+                ("WScale", 10),
+                ("NOP", None),
+                ("MSS", 265),
+                ("Timestamp", (0xFFFFFFFF, 0)),
+                ("SAckOK", "")
+            ],
+            seq=self.seq,
+            ack=self.ack
+        )
 
 
 class T4Probe(TCPProbe):
@@ -112,7 +133,22 @@ class T4Probe(TCPProbe):
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
-        self.probe_config = {"flags": "A", "df": True, "window": 1024, "port": self.open_port}
+        self.ip_packet = IP(dst=self.target_ip, flags="DF")
+        self.tcp_packet = TCP(
+            sport=self.src_port + 4,
+            dport=self.open_port,
+            flags="A",
+            window=1024,
+            options=[
+                ("WScale", 10),
+                ("NOP", None),
+                ("MSS", 265),
+                ("Timestamp", (0xFFFFFFFF, 0)),
+                ("SAckOK", "")
+            ],
+            seq=self.seq,
+            ack=self.ack
+        )
 
 
 class T5Probe(TCPProbe):
@@ -120,7 +156,22 @@ class T5Probe(TCPProbe):
     def __init__(self, target_ip, closed_port):
         super().__init__(target_ip)
         self.closed_port = closed_port
-        self.probe_config = {"flags": "S", "df": False, "window": 31337, "port": self.closed_port}
+        self.ip_packet = IP(dst=self.target_ip)
+        self.tcp_packet = TCP(
+            sport=self.src_port + 5,
+            dport=self.closed_port,
+            flags="S",
+            window=31337,
+            options=[
+                ("WScale", 10),
+                ("NOP", None),
+                ("MSS", 265),
+                ("Timestamp", (0xFFFFFFFF, 0)),
+                ("SAckOK", "")
+            ],
+            seq=self.seq,
+            ack=self.ack
+        )
 
 
 class T6Probe(TCPProbe):
@@ -128,7 +179,22 @@ class T6Probe(TCPProbe):
     def __init__(self, target_ip, closed_port):
         super().__init__(target_ip)
         self.closed_port = closed_port
-        self.probe_config = {"flags": "A", "df": True, "window": 32768, "port": self.closed_port}
+        self.ip_packet = IP(dst=self.target_ip, flags="DF")
+        self.tcp_packet = TCP(
+            sport=self.src_port + 6,
+            dport=self.closed_port,
+            flags="A",
+            window=32768,
+            options=[
+                ("WScale", 10),
+                ("NOP", None),
+                ("MSS", 265),
+                ("Timestamp", (0xFFFFFFFF, 0)),
+                ("SAckOK", "")
+            ],
+            seq=self.seq,
+            ack=self.ack
+        )
 
 
 class T7Probe(TCPProbe):
@@ -136,4 +202,19 @@ class T7Probe(TCPProbe):
     def __init__(self, target_ip, closed_port):
         super().__init__(target_ip)
         self.closed_port = closed_port
-        self.probe_config = {"flags": "FPU", "df": False, "window": 65535, "port": self.closed_port}
+        self.ip_packet = IP(dst=self.target_ip)
+        self.tcp_packet = TCP(
+            sport=self.src_port + 7,
+            dport=self.closed_port,
+            flags="FPU",
+            window=65535,
+            options=[
+                ("WScale", 10),
+                ("NOP", None),
+                ("MSS", 265),
+                ("Timestamp", (0xFFFFFFFF, 0)),
+                ("SAckOK", "")
+            ],
+            seq=self.seq,
+            ack=self.ack
+        )

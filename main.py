@@ -1,3 +1,4 @@
+from nmap_db.parsed_nmap_os_db import os_db
 from nmap_db.query_db import calculate_os_score
 from probes import T1Probe, T2Probe, T3Probe
 from probes.ecn import ExplicitCongestionNotificationProbe
@@ -5,10 +6,17 @@ from probes.icmp_echo import ICMPEchoProbe
 from probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe
 from probes.tcp_seq import SEQProbe, OPSProbe, WINProbe
 from probes.udp import UDPProbe
-from response_tests import TCPISNGCDTest, TCPISNSequencePredictabilityTest, TCPIIDTI, \
-    TCPIIDCI, ICMPIIDII, TCPAndICMPIPIDSequenceBooleanTest
+from response_tests import (
+    TCPISNGCDTest,
+    TCPISNSequencePredictabilityTest,
+    TCPIIDTI,
+    TCPIIDCI,
+    ICMPIIDII,
+    TCPAndICMPIPIDSequenceBooleanTest
+)
 from response_tests.response_test_mapping import probe_to_test_mapping
-from nmap_db.parsed_nmap_os_db import os_db
+
+
 # from core.utils.fp_utils import resolve_host
 # import validators
 
@@ -130,10 +138,11 @@ def main():
     # Calculate the scores for each OS
     os_scores = calculate_os_score(all_results, os_db)
 
-    # Find the OS with the highest score
-    max_score = max(os_scores.values())
-    best_os_list = [os for os, score in os_scores.items() if score == max_score]
-    print(f"The best matching OS(es) with a score of {max_score}: {', '.join(best_os_list)}")
+    sorted_os_scores = sorted(os_scores.items(), key=lambda item: item[1], reverse=True)[:10]
+    print()
+    print("Top ten matching Operating Systems:")
+    for os, score in sorted_os_scores:
+        print(f"{os}: {score}")
 
 
 if __name__ == "__main__":

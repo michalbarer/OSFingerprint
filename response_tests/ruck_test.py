@@ -14,13 +14,14 @@ class IntegrityReturnedUDPChecksumTest(ResponseTest):
         Analyzes the returned UDP checksum value.
         """
         udp_checksum = self.response_data.get("udp_checksum")
+        returned_udp_checksum = self.response_data.get("returned_udp_checksum")
 
-        if udp_checksum is None:
+        if udp_checksum is None or returned_udp_checksum is None:
             print("No UDP checksum data available for analysis.")
             return None
 
-        if self.response_data.get("is_valid_udp_checksum", False):
-            result = "G"  # Good checksum #
+        if returned_udp_checksum == udp_checksum:
+            result = "G"
         else:
             result = udp_checksum  # Return the actual checksum value
 

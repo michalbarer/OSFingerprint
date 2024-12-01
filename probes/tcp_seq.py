@@ -160,7 +160,7 @@ class T1Probe(TCPSequenceProbe):
         if self.responses[0]:
             ip_layer = self.responses[0].getlayer(IP)
             if ip_layer:
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl, "probe_response_ttl": self.response.ttl}
             if TCP in self.responses[0]:
                 response = self.responses[0][TCP]
                 response_data["flags"] = str(response.flags)

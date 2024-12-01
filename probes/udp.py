@@ -11,7 +11,7 @@ class UDPProbe(Probe):
     Sends the UDP (U1) probe to a closed port.
     """
     def send_probe(self):
-        ip_packet = IP(dst=self.target_ip, id=0x1042)
+        ip_packet = IP(dst=self.target_ip, id=1042)
         udp_packet = UDP(dport=self.target_port)
         payload = b'C' * 300
         packet = ip_packet / udp_packet / payload
@@ -36,8 +36,8 @@ class UDPProbe(Probe):
         if self.response:
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
-                response_data["flags"] = ip_layer.flags
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["flags"] = str(ip_layer.flags)
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl, "probe_response_ttl": self.response.ttl}
                 response_data["ip_total_length"] = ip_layer.len
                 response_data["ip_id"] = ip_layer.id
                 response_data["ip_checksum"] = ip_layer.chksum

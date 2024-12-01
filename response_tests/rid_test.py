@@ -21,12 +21,12 @@ class ReturnedProbeIPIDValueTest(ResponseTest):
             return None
 
         # Check if the returned IP ID matches the expected static value (0x1042)
-        if returned_ip_id == 0x1042:
+        if returned_ip_id == 1042:
             print("Returned Probe IP ID Value (RID): G")
             return "G"
 
         # Check for systems that flip the bytes and return 0x4210
-        if returned_ip_id == 0x4210:
+        if returned_ip_id == 4210:
             print(f"Returned Probe IP ID Value (RID): 0x4210 (flipped bytes)")
             return int(0x4210)
 

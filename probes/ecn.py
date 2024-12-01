@@ -50,7 +50,7 @@ class ExplicitCongestionNotificationProbe(Probe):
         if self.response:
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl, "probe_response_ttl": self.response.ttl}
             if TCP in self.response:
                 tcp_layer = self.response[TCP]
                 response_data["tcp_window_size"] = tcp_layer.window

@@ -7,9 +7,4 @@ class IPDontFragmentTest(ResponseTest):
     """
     def analyze(self):
         is_df_flag_set = self.response_data.get("df_flag_set")
-
-        if not is_df_flag_set:
-            print("No flag data available, unable to determine ECN support.")
-            return None
-
         return "Y" if is_df_flag_set else "N"

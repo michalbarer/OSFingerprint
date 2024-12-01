@@ -9,6 +9,8 @@ from response_tests import TCPISNGCDTest, TCPISNSequencePredictabilityTest, TCPI
     TCPIIDCI, ICMPIIDII, TCPAndICMPIPIDSequenceBooleanTest
 from response_tests.response_test_mapping import probe_to_test_mapping
 from nmap_db.parsed_nmap_os_db import os_db
+# from core.utils.fp_utils import resolve_host
+# import validators
 
 
 def run_seq_probe_and_tests(target_ip, open_port, closed_port):
@@ -63,9 +65,21 @@ def run_seq_probe_and_tests(target_ip, open_port, closed_port):
     return seq_probe_results
 
 
+# def validate_host(host: str):  # todo - resolve url to ip address
+#   """
+#   Validates the host and returns the resolved IP address.
+#   :param host: the host to validate
+#   :return: the resolved IP address
+#   """
+#     if validators.domain(host):
+#         host = resolve_host(host)
+#     else:
+#         socket.inet_aton(host)
+#     return host
+
 
 def main():
-    target_ip = "scanme.nmap.org"
+    target_ip = '45.33.32.156' # "scanme.nmap.org"
     open_port = 80
     closed_port = 1234
 
@@ -124,7 +138,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# todo: Fix SEQ tests - maybe run dependencies inside probe
-# todo: Cast tests response and db to hex: DB in hex type (check if there are ints)
-# todo: project document

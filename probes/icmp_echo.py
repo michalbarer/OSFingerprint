@@ -27,7 +27,7 @@ class ICMPEchoProbe(Probe):
             packet = ip_packet / icmp_packet / payload
 
             self.sent_ttl = packet[IP].ttl
-            response = sr1(packet, timeout=1, verbose=0)
+            response = sr1(packet, timeout=2, verbose=0)
             if response and IP in response:
                 self.ip_ids.append(response[IP].id)
 

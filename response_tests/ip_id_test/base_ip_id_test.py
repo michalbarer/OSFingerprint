@@ -25,8 +25,8 @@ def classify_ipid_sequence(ip_ids: List[int]) -> Optional[str]:
     if all(id == ip_ids[0] for id in ip_ids):
         return hex(ip_ids[0])
 
-    # Check for RI: any diff >1000 and not divisible by 256
-    if any(diff > 1000 and diff % 256 != 0 for diff in diffs):
+    # Check for RI: any diff >1000 and not divisible by 256 or diff >=256000 and divisible by 256
+    if any((diff > 1000 and diff % 256 != 0) or (diff % 256 == 0 and diff >= 256000) for diff in diffs):
         return 'RI'
 
     # Check for BI: all diffs divisible by 256 and <=5120

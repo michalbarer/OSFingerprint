@@ -1,8 +1,10 @@
+from typing import Dict
+
 from nmap_db.db_names_mapping import test_names_mapping, probes_mapping
 from nmap_db.match_points import MATCH_POINTS
 
 
-def compare_result(probe, test_name, test_result, db_result):
+def compare_result(probe: str, test_name: str, test_result, db_result) -> int:
     """
     Compares the given test result with the db result and returns the score based on the matching points.
     """
@@ -40,7 +42,7 @@ def compare_result(probe, test_name, test_result, db_result):
     return 0
 
 
-def calculate_os_score(probe_results, db):
+def calculate_os_score(probe_results, db) -> Dict[str, float]:
     os_scores = {}
 
     for os_name, os_data in db.items():

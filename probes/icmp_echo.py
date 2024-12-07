@@ -1,3 +1,4 @@
+import random
 import time
 
 from scapy.layers.inet import IP, ICMP
@@ -20,9 +21,12 @@ class ICMPEchoProbe(Probe):
         self.ip_ids = []
 
     def send_probe(self):
+        ip_id = random.randint(0, 65534)
+        icmp_id = random.randint(0, 65534)
+
         for config in self.probe_configs:
-            ip_packet = IP(dst=self.target_ip, tos=config["tos"])
-            icmp_packet = ICMP(type="echo-request", code=config["code"], seq=config["seq_num"])
+            ip_packet = IP(dst=self.target_ip, tos=config["tos"], id=ip_id)
+            icmp_packet = ICMP(type="echo-request", code=config["code"], seq=config["seq_num"], id=icmp_id)
             payload = bytes([0x00] * config["payload_size"])
             packet = ip_packet / icmp_packet / payload
 
@@ -49,7 +53,7 @@ class ICMPEchoProbe(Probe):
                 icmp_layer = response.getlayer(ICMP)
 
                 response_data["icmp_responses"].append({
-                    "df": "DF" in ip_layer.flags,
+                    "df": ip_layer.flags.DF,
                     "ttl": ip_layer.ttl,
                     "probe_code": self.probe_configs[i]["code"],
                     "response_code": icmp_layer.code if icmp_layer else None,
@@ -58,7 +62,7 @@ class ICMPEchoProbe(Probe):
                 if not response_data["icmp_u1_response"]:
                     response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
             else:
-                response_data["icmp_responses"].append(None)
+                response_data["icmp_responses"].append({})
 
         return response_data
 

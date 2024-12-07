@@ -17,8 +17,13 @@ class UDPProbe(Probe):
         payload = b'C' * 300
         packet = ip_packet / udp_packet / payload
         self.sent_ttl = packet[IP].ttl
-        self.sent_ip_chksum = packet[IP].chksum  # todo - chksum is None
+
+        # Get checksums before sending the packet
+        del packet.chksum
+        packet = packet.__class__(bytes(packet))
+        self.sent_ip_chksum = packet[IP].chksum
         self.sent_udp_chksum = packet[UDP].chksum
+
         self.response = sr1(packet, timeout=2, verbose=0)
 
     def get_response_data(self):
@@ -31,7 +36,7 @@ class UDPProbe(Probe):
             "ip_checksum": self.sent_ip_chksum,
             "returned_ip_checksum": None,
             "unused_field": None,
-            "udp_chksum": self.sent_udp_chksum,
+            "udp_checksum": self.sent_udp_chksum,
             "returned_udp_checksum": None,
             "udp_payload": None,
             "returned_ip_total_length": None,
@@ -42,7 +47,7 @@ class UDPProbe(Probe):
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
                 response_data["flags"] = str(ip_layer.flags)
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl, "probe_response_ttl": self.response.ttl}
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
                 response_data["ip_total_length"] = ip_layer.len
                 response_data["ip_id"] = ip_layer.id
 

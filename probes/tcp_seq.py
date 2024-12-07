@@ -1,5 +1,5 @@
-import time
 import random
+import time
 
 from scapy.layers.inet import IP, TCP
 from scapy.sendrecv import sr1
@@ -155,12 +155,14 @@ class T1Probe(TCPSequenceProbe):
             "reserved_field": 0,
             "urgent_pointer": 0,
             "urg_flag_set": False,
+            "df_flag_set": None,
         }
 
         if self.responses[0]:
             ip_layer = self.responses[0].getlayer(IP)
             if ip_layer:
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}  # todo - "probe_response_ttl": self.response.ttl returns None
+                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["df_flag_set"] = ip_layer.flags.DF
             if TCP in self.responses[0]:
                 response = self.responses[0][TCP]
                 response_data["flags"] = str(response.flags)

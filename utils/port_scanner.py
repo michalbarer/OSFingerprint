@@ -1,43 +1,49 @@
-import socket
-from typing import Optional
+import random
+import time
+from scapy.layers.inet import IP, TCP
+from scapy.sendrecv import sr1
 
-
-def get_open_and_closed_port(host: str, ports: range) -> tuple[Optional[int], Optional[int]]:
+def port_scanner(host: str, port_range: range, time_limit: int = 60):
     """
-    Scans the specified ports on the given host and returns the first open and closed ports.
+    A port scanner with a time limit.
 
-    Parameters:
-        host (str): The hostname or IP address to scan.
-        ports (range): A range of ports to scan.
-
+    Args:
+        host (str): the host
+        port_range (range): port range to check
+        time_limit (int): time limit for the scan in seconds. Default is 60 seconds.
     Returns:
-        tuple: A tuple containing:
-               - The first open port (or None if none found)
-               - The first closed port (or None if none found)
+        tuple: A tuple of lists containing open and closed ports.
     """
-    # todo: this implementation is lacking - filtered ports are considered as closed ports
-    open_port = None
-    closed_port = None
+    open_ports = []
+    closed_ports = []
+    start_time = time.time()
 
-    for port in ports:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(1)
-            result = s.connect_ex((host, port))
-            if result == 0 and open_port is None:
-                open_port = port
-            elif result != 0 and closed_port is None:
-                closed_port = port
+    for port in port_range:
+        if time.time() - start_time > time_limit:
+            print("Time limit exceeded. Returning results found so far.")
+            break
 
-            if open_port is not None and closed_port is not None:
-                break
+        src_port = random.randint(1025, 65534)
+        resp = sr1(
+            IP(dst=host)/TCP(sport=src_port, dport=port, flags="S"), timeout=2, verbose=0
+        )
 
-    return open_port, closed_port
+        if resp and resp.haslayer(TCP):
+            if resp.getlayer(TCP).flags == 0x12:
+                open_ports.append(port)
+            elif resp.getlayer(TCP).flags == 0x14:
+                closed_ports.append(port)
+
+    return open_ports, closed_ports
 
 
 if __name__ == "__main__":
-    host = "ynet.co.il"
-    ports = range(20, 1025)
-    open_port, closed_port = get_open_and_closed_port(host, ports)
+    host = "10.100.102.7"
+    start_port = 8070
+    end_port = 8090
+    limit = 30
 
-    print(f"First Open Port: {open_port}")
-    print(f"First Closed Port: {closed_port}")
+    result = port_scanner(host, range(start_port, end_port), limit)
+
+    print(f"Open Ports: {result[0]}")
+    print(f"Closed Ports: {result[1]}")

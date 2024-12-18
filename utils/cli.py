@@ -25,18 +25,23 @@ def os_fingerprint(host, start_port, end_port, time_limit, num_results, verbose)
     click.echo('Start scanning ports...')
     result = port_scanner(host, port_range, time_limit)
     open_ports, closed_ports = result
+    click.echo('Done scanning ports...')
 
     if not open_ports and not closed_ports:
         click.secho("No ports found.", fg='red')
         raise click.Abort()
 
+    click.echo('Start running probes and tests...')
     test_results = run_tests(host, open_ports, closed_ports)
+    click.echo('Done running probes and tests...')
 
     if test_results:
         # if verbose:
         #     click.echo('Results:')
         #     click.echo(results)
+        click.echo('Start comparing results to database...')
         os_scores = compare_results_to_db(test_results, num_results)
+        click.echo('Done comparing results to database...')
         click.secho(f"Top {num_results} matching Operating Systems:")
         for os, score in os_scores:
             click.secho(f"{os}: {score}")

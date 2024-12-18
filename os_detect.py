@@ -24,7 +24,6 @@ from response_tests.response_test_mapping import probe_to_test_mapping
 def run_seq_probe_and_tests(target_ip, open_port, closed_port):
     seq_probe = SEQProbe(target_ip, open_port)
     seq_probe.send_probe()
-    seq_probe.analyze_response()
     seq_response_data = seq_probe.get_response_data()
     seq_probe_results = {}
     response_tests = probe_to_test_mapping[seq_probe.__class__.__name__]
@@ -70,38 +69,10 @@ def run_seq_probe_and_tests(target_ip, open_port, closed_port):
 
         seq_probe_results[test.__name__] = value
 
-    return seq_probe_results
+    return {seq_probe.__class__.__name__: seq_probe_results}
 
 
-# def validate_host(host: str):  # todo - resolve url to ip address
-#   """
-#   Validates the host and returns the resolved IP address.
-#   :param host: the host to validate
-#   :return: the resolved IP address
-#   """
-#     if validators.domain(host):
-#         host = resolve_host(host)
-#     else:
-#         socket.inet_aton(host)
-#     return host
-
-
-def main():
-    target_ip = '45.33.32.156' # "scanme.nmap.org"
-    open_port = 80
-    closed_port = 1234
-
-    # target_ip = "10.100.102.192"
-    # open_port = 8075
-    # closed_port = 1000
-
-    all_results = {}
-
-    # Run SEQ probe:
-    seq_probe_results = run_seq_probe_and_tests(target_ip, open_port, closed_port)
-    all_results[SEQProbe.__name__] = seq_probe_results
-
-    # Run other probes:
+def run_all_probes_and_tests(target_ip, open_port, closed_port):
     probes = [
         OPSProbe(target_ip, open_port),
         WINProbe(target_ip, open_port),
@@ -117,33 +88,56 @@ def main():
         UDPProbe(target_ip, closed_port)
     ]
 
-    # all_results = {}
+    all_results = {}
 
     for probe in probes:
         probe.send_probe()
-        probe.analyze_response()
-        print()
         resp_data = probe.get_response_data()
         response_tests = probe_to_test_mapping[probe.__class__.__name__]
         probe_results = {}
         for test in response_tests:
             result = test(response_data=resp_data).analyze()
             probe_results[test.__name__] = result
-        print()
         all_results[probe.__class__.__name__] = probe_results
+    return all_results
 
-    import pprint
-    pprint.pprint(all_results)
+# def validate_host(host: str):  # todo - resolve url to ip address
+#   """
+#   Validates the host and returns the resolved IP address.
+#   :param host: the host to validate
+#   :return: the resolved IP address
+#   """
+#     if validators.domain(host):
+#         host = resolve_host(host)
+#     else:
+#         socket.inet_aton(host)
+#     return host
 
-    # Calculate the scores for each OS
-    os_scores = calculate_os_score(all_results, os_db)
 
-    sorted_os_scores = sorted(os_scores.items(), key=lambda item: item[1], reverse=True)[:10]
-    print()
-    print("Top ten matching Operating Systems:")
-    for os, score in sorted_os_scores:
-        print(f"{os}: {score}")
+def run_tests(target_ip: str, open_ports: list, closed_ports: list):
+    # target_ip = '45.33.32.156' # "scanme.nmap.org"
+    # target_ip = '10.100.102.7'
+    # open_port = 8080
+    # closed_port = 1234
 
+    # target_ip = "10.100.102.192"
+    # open_port = 8075
+    # closed_port = 1000
+    if open_ports:
+        open_port = open_ports[0]
+    if closed_ports:
+        closed_port = closed_ports[0]
+    all_results = {}
 
-if __name__ == "__main__":
-    main()
+    all_results.update(run_seq_probe_and_tests(target_ip, open_port, closed_port))
+    all_results.update(run_all_probes_and_tests(target_ip, open_port, closed_port))
+
+    return all_results
+
+def compare_results_to_db(results, top_results: int = 10):
+    """
+    Calculates the OS score for each OS in the database.
+    """
+    os_scores = calculate_os_score(results, os_db)
+    return sorted(os_scores.items(), key=lambda item: item[1], reverse=True)[:top_results]
+

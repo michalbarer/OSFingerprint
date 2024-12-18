@@ -1,16 +1,20 @@
+import logging
 import random
 import time
+from venv import logger
+
 from scapy.layers.inet import IP, TCP
 from scapy.sendrecv import sr1
 
-def port_scanner(host: str, port_range: range, time_limit: int = 60):
+logger = logging.getLogger(__name__)
+def port_scanner(host: str, port_range: range, time_limit: int = 30):
     """
     A port scanner with a time limit.
 
     Args:
         host (str): the host
         port_range (range): port range to check
-        time_limit (int): time limit for the scan in seconds. Default is 60 seconds.
+        time_limit (int): time limit for the scan in seconds. Default is 30 seconds.
     Returns:
         tuple: A tuple of lists containing open and closed ports.
     """
@@ -20,7 +24,7 @@ def port_scanner(host: str, port_range: range, time_limit: int = 60):
 
     for port in port_range:
         if time.time() - start_time > time_limit:
-            print("Time limit exceeded. Returning results found so far.")
+            logger.warning("Time limit exceeded. Returning results found so far.")
             break
 
         src_port = random.randint(1025, 65534)

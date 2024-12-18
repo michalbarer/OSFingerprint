@@ -1,0 +1,42 @@
+import logging
+
+import click
+
+from os_detect import run_tests, compare_results_to_db
+from utils.port_scanner import port_scanner, logger
+
+@click.command()
+@click.option('--host', '-h', required=True, type=str, help='The target host (IP address).')
+@click.option('--start-port', '-sp', required=True, type=click.IntRange(0, 65535), help='Start of the port range.')
+@click.option('--end-port', '-ep', required=True, type=click.IntRange(0, 65535), help='End of the port range.')
+@click.option('--time-limit', '-l', default=30, type=int, help='Time limit for the scan in seconds (default: 30).')
+@click.option('--num-results', '-n', default=10, type=int, help='Number of top results to show (default: 10).')
+@click.option('--verbose', '-v', is_flag=True, default=False, help='Enable verbose mode.')
+def os_fingerprint(host, start_port, end_port, time_limit, num_results, verbose):
+    if start_port > end_port:
+        raise click.BadParameter("Start port must be less than or equal to end port.")
+
+    if verbose:
+        logger.setLevel(logging.INFO)
+    else:
+        logger.setLevel(logging.ERROR)
+
+    port_range = range(start_port, end_port + 1)
+    click.echo('Start scanning ports...')
+    result = port_scanner(host, port_range, time_limit)
+    open_ports, closed_ports = result
+
+    if not open_ports and not closed_ports:
+        click.secho("No ports found.", fg='red')
+        raise click.Abort()
+
+    test_results = run_tests(host, open_ports, closed_ports)
+
+    if test_results:
+        # if verbose:
+        #     click.echo('Results:')
+        #     click.echo(results)
+        os_scores = compare_results_to_db(test_results, num_results)
+        click.secho(f"Top {num_results} matching Operating Systems:")
+        for os, score in os_scores:
+            click.secho(f"{os}: {score}")

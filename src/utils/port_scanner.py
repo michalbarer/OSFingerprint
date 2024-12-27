@@ -72,7 +72,8 @@ COMMON_PORTS = {
 
 def port_scanner(host: str,
                  open_ports: Optional[List[int]] = None,
-                 closed_ports: Optional[List[int]] = None) -> tuple:
+                 closed_ports: Optional[List[int]] = None,
+                 skip_common_ports: bool = False) -> tuple:
     """
     A port scanner with a time limit.
 
@@ -80,6 +81,7 @@ def port_scanner(host: str,
         host (str): the host
         open_ports (list): list of open ports
         closed_ports (list): list of closed ports
+        skip_common_ports (bool): skip common ports scan if both open and closed ports are provided
     Returns:
         tuple: A tuple of lists containing open and closed ports.
     """
@@ -89,7 +91,9 @@ def port_scanner(host: str,
         closed_ports = []
 
     ports_to_scan = open_ports + closed_ports
-    ports_to_scan += list(COMMON_PORTS.keys())
+
+    if not skip_common_ports and open_ports and closed_ports:
+        ports_to_scan += list(COMMON_PORTS.keys())
 
     validated_open_ports = []
     validated_closed_ports = []

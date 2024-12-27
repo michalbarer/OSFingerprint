@@ -1,5 +1,3 @@
-from random import randint
-
 from src.probes.ecn import ExplicitCongestionNotificationProbe
 from src.probes.icmp_echo import ICMPEchoProbe
 from src.probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe, T2Probe, T3Probe
@@ -99,10 +97,7 @@ def run_all_probes_and_tests(target_ip, open_port, closed_port):
     return all_results
 
 
-def run_tests(target_ip: str, open_ports: list, closed_ports: list):
-    open_port = open_ports[0]
-    closed_port = closed_ports[0] if closed_ports else randint(1024, 65535)
-
+def run_tests(target_ip: str, open_port: int, closed_port: int):
     all_results = {}
     all_results.update(run_seq_probe_and_tests(target_ip, open_port, closed_port))
     all_results.update(run_all_probes_and_tests(target_ip, open_port, closed_port))
@@ -114,5 +109,5 @@ def compare_results_to_db(results, top_results: int = 10):
     Calculates the OS score for each OS in the database.
     """
     os_scores = calculate_os_score(results, OS_DB)
-    return sorted(os_scores.items(), key=lambda item: item[1], reverse=True)[:top_results]
+    return dict(sorted(os_scores.items(), key=lambda item: item[1], reverse=True)[:top_results])
 

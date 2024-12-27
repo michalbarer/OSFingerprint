@@ -99,7 +99,8 @@ def run_all_probes_and_tests(target_ip, open_port, closed_port):
 
 def run_tests(target_ip: str, open_ports: list, closed_ports: list):
     open_port = open_ports[0]
-    closed_port = closed_ports[0]
+    if closed_ports:
+        closed_port = closed_ports[0]
     all_results = {}
 
     all_results.update(run_seq_probe_and_tests(target_ip, open_port, closed_port))

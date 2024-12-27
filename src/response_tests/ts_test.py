@@ -14,14 +14,11 @@ class TCPTimestampOptionTest(ResponseTest):
         timestamps = self.response_data.get("timestamps")
 
         if len(timestamp_vals) < 2:
-            print("Insufficient data for TS test")
             return "U"
 
         if any(ts == 0 for ts in timestamp_vals):
-            print("TS test result: 0 (Zero timestamp)")
             return 0
 
-        # Step 1: Calculate the rate of timestamp increments per second
         timestamp_rate = []
         for i in range(1, len(timestamp_vals)):
             ts_diff = timestamp_vals[i] - timestamp_vals[i - 1]
@@ -31,20 +28,14 @@ class TCPTimestampOptionTest(ResponseTest):
                 rate = ts_diff / time_diff
                 timestamp_rate.append(rate)
 
-        # Step 2: Calculate the average increment rate
         avg_rate = sum(timestamp_rate) / len(timestamp_rate)
 
-        # Step 3: Apply the specific range logic
         if avg_rate <= 5.66:
-            print("TS test result: 1 (Frequency: 2 Hz)")
             return 1
         elif 70 <= avg_rate <= 150:
-            print("TS test result: 7 (Frequency: 100 Hz)")
             return 7
         elif 150 <= avg_rate <= 350:
-            print("TS test result: 8 (Frequency: 200 Hz)")
             return 8
         else:
             log_rate = round(math.log2(avg_rate))
-            print(f"TS test result: {log_rate} (Logarithmic calculation of average rate)")
             return log_rate

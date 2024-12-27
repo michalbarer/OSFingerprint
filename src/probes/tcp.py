@@ -69,18 +69,10 @@ class TCPProbe(Probe):
                 response_data["tcp_options"] = tcp_layer.options
         return response_data
 
-    def analyze_response(self):
-        if self.response and TCP in self.response:
-            tcp_layer = self.response[TCP]
-            print(f"TCP Flag Probe {self.__class__.__name__}: {self.response.summary()}")
-            print(f"  Flags: {tcp_layer.flags}")
-            print(f"  Window Size: {tcp_layer.window}")
-        else:
-            print(f"TCP Flag Probe {self.__class__.__name__} received no response.")
-
 
 class T2Probe(TCPProbe):
     """ TCP Flag Probe T2 """
+
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
@@ -103,6 +95,7 @@ class T2Probe(TCPProbe):
 
 class T3Probe(TCPProbe):
     """ TCP Flag Probe T3 """
+
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
@@ -126,6 +119,7 @@ class T3Probe(TCPProbe):
 
 class T4Probe(TCPProbe):
     """ TCP Flag Probe T4 """
+
     def __init__(self, target_ip, open_port):
         super().__init__(target_ip)
         self.open_port = open_port
@@ -149,6 +143,7 @@ class T4Probe(TCPProbe):
 
 class T5Probe(TCPProbe):
     """ TCP Flag Probe T5 """
+
     def __init__(self, target_ip, closed_port):
         super().__init__(target_ip)
         self.closed_port = closed_port
@@ -172,6 +167,7 @@ class T5Probe(TCPProbe):
 
 class T6Probe(TCPProbe):
     """ TCP Flag Probe T6 """
+
     def __init__(self, target_ip, closed_port):
         super().__init__(target_ip)
         self.closed_port = closed_port
@@ -195,6 +191,7 @@ class T6Probe(TCPProbe):
 
 class T7Probe(TCPProbe):
     """ TCP Flag Probe T7 """
+
     def __init__(self, target_ip, closed_port):
         super().__init__(target_ip)
         self.closed_port = closed_port

@@ -15,8 +15,6 @@ class IPTotalLengthTest(ResponseTest):
         ip_total_length = self.response_data.get("ip_total_length")
 
         if ip_total_length is None:
-            print("No IP total length data available for analysis.")
             return None
 
-        print(f"IP Total Length (IPL): {ip_total_length}")
         return ip_total_length

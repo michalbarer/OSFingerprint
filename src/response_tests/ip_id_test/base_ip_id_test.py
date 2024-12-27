@@ -55,12 +55,6 @@ class IPIDSequenceTest(ResponseTest):
         ip_ids = self.extract_ip_ids()
 
         if not ip_ids:
-            print(f"{self.__class__.__name__}: No IP IDs extracted.")
             return None
 
-        classification = classify_ipid_sequence(ip_ids)
-        if classification:
-            print(f"{self.__class__.__name__}: IP ID Sequence Classification: {classification}")
-        else:
-            print(f"{self.__class__.__name__}: IP ID Sequence could not be classified.")
-        return classification
+        return classify_ipid_sequence(ip_ids)

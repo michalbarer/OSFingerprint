@@ -15,12 +15,9 @@ class TCPFlagsTest(ResponseTest):
         flags = self.response_data.get("flags")
 
         if not flags:
-            print("No TCP flags available for analysis.")
             return ""
 
         # Ensure the flags are in the correct order
         ordered_flags = "EUAPRFS"
         sorted_flag_string = "".join(sorted(flags, key=ordered_flags.index))
-
-        print(f"TCP Flags (F) Result: {sorted_flag_string}")
         return sorted_flag_string

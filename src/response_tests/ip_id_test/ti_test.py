@@ -16,7 +16,6 @@ class TCPIIDTI(IPIDSequenceTest):
         ip_ids = self.response_data.get("ip_ids", [])
 
         if len(ip_ids) < 3:
-            print("TI Test: Insufficient responses (minimum 3 required).")
             return []
 
         return ip_ids

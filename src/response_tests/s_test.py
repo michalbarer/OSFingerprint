@@ -16,7 +16,6 @@ class TCPSequenceNumberTest(ResponseTest):
         probe_ack_number = self.response_data.get("probe_ack_number")
 
         if response_sequence_number is None or probe_ack_number is None:
-            print("Insufficient data: Sequence or acknowledgment number missing.")
             return None
 
         if response_sequence_number == 0:
@@ -28,5 +27,4 @@ class TCPSequenceNumberTest(ResponseTest):
         else:
             result = "O"
 
-        print(f"TCP Sequence Number (S) Result: {result}")
         return result

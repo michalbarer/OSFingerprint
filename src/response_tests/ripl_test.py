@@ -15,12 +15,9 @@ class ReturnedProbeIPTotalLengthTest(ResponseTest):
         returned_length = self.response_data.get("returned_ip_total_length")
 
         if returned_length is None:
-            print("No returned IP total length data available for analysis.")
             return None
 
         if returned_length == 0x148:  # Hexadecimal 328
-            print("Returned Probe IP Total Length (RIPL): G")
             return "G"
 
-        print(f"Returned Probe IP Total Length (RIPL): {returned_length}")
         return returned_length

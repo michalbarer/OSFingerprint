@@ -18,7 +18,6 @@ class IntegrityReturnedIPChecksumTest(ResponseTest):
         returned_ip_checksum = self.response_data.get("returned_ip_checksum")
 
         if ip_checksum is None or returned_ip_checksum is None:
-            print("No IP checksum data available for analysis.")
             return None
 
         if returned_ip_checksum == 0:
@@ -28,5 +27,4 @@ class IntegrityReturnedIPChecksumTest(ResponseTest):
         else:
             result = "I"
 
-        print(f"Integrity of Returned Probe IP Checksum Value (RIPCK): {result}")
         return result

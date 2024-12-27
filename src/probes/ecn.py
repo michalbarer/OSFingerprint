@@ -68,11 +68,3 @@ class ExplicitCongestionNotificationProbe(Probe):
                 response_data["urg_flag_set"] = "U" in str(tcp_layer.flags)
 
         return response_data
-
-    def analyze_response(self):
-        if self.response and TCP in self.response:
-            tcp_layer = self.response[TCP]
-            print(f"ECN Probe Response: {self.response.summary()}")
-            print(f"Flags: {tcp_layer.flags}, Window Size: {tcp_layer.window}")
-        else:
-            print("ECN Probe received no response.")

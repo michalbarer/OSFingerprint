@@ -8,6 +8,7 @@ class TCPInitialWindowSizeTest(ResponseTest):
     TCP Initial Window Size (W) Test.
     Records the 16-bit TCP window size of the received packet.
     """
+
     def __init__(self, response_data, index: Optional[int] = None):
         super().__init__(response_data)
         self.index = index
@@ -23,10 +24,8 @@ class TCPInitialWindowSizeTest(ResponseTest):
         tcp_window_size = self.response_data.get(key)
 
         if tcp_window_size is None:
-            print("No TCP window size data available for analysis.")
             return None
 
-        print(f"TCP Initial Window Size (W): {tcp_window_size}")
         return tcp_window_size
 
 

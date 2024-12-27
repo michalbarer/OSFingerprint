@@ -30,5 +30,4 @@ class TCPMiscellaneousQuirksTest(ResponseTest):
         if not quirks_string:
             quirks_string = ""
 
-        print(f"TCP Miscellaneous Quirks (Q) Result: {quirks_string}")
         return quirks_string

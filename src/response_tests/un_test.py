@@ -17,10 +17,8 @@ class UnusedPortUnreachableFieldTest(ResponseTest):
         unused_field = self.response_data.get("unused_field")
 
         if unused_field is None:
-            print("No unused field data available for analysis.")
             return None
 
-        print(f"Unused Port Unreachable Field (UN): {unused_field}")
         if unused_field == b'':
             return 0
         else:

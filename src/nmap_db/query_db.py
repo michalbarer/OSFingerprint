@@ -121,6 +121,5 @@ def calculate_os_score(probe_results, db) -> Dict[str, float]:
                     os_score += compare_result(probe, db_test_name, test_result, os_data['Tests'][db_probe][db_test_name])
 
         os_scores[os_name] = round((os_score / max_score) * 100, 2)
-        print(f"Score for {os_name}: {os_score}")
 
     return os_scores

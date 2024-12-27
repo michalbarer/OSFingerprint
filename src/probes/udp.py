@@ -68,9 +68,3 @@ class UDPProbe(Probe):
                 response_data["returned_ip_checksum"] = ip_error_layer.chksum
 
         return response_data
-
-    def analyze_response(self):
-        if self.response:
-            print("UDP Probe Response:", self.response.summary())
-        else:
-            print("UDP Probe received no response.")

@@ -15,8 +15,7 @@ class TCPIIDCI(IPIDSequenceTest):
         """
         closed_port_ipd_ids = self.response_data.get("closed_port_ipd_ids", [])
 
-        if len(closed_port_ipd_ids) < 2:
-            print("CI Test: Insufficient responses (minimum 2 required).") # todo: is 2 responses or 2 ip ids? e.g - 2 responses and 1 ip id
+        if len(closed_port_ipd_ids) < 2:  # todo: is 2 responses or 2 ip ids? e.g - 2 responses and 1 ip id
             return []
 
         return closed_port_ipd_ids

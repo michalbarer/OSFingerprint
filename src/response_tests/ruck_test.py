@@ -17,7 +17,6 @@ class IntegrityReturnedUDPChecksumTest(ResponseTest):
         returned_udp_checksum = self.response_data.get("returned_udp_checksum")
 
         if udp_checksum is None or returned_udp_checksum is None:
-            print("No UDP checksum data available for analysis.")
             return None
 
         if returned_udp_checksum == udp_checksum:
@@ -25,5 +24,4 @@ class IntegrityReturnedUDPChecksumTest(ResponseTest):
         else:
             result = udp_checksum
 
-        print(f"Integrity of Returned Probe UDP Checksum Value (RUCK): {result}")
         return result

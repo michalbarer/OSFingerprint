@@ -23,7 +23,6 @@ class TCPOptionsTest(ResponseTest):
         tcp_options = self.response_data.get(key, [])
 
         if not tcp_options:
-            print("No TCP options data available for analysis.")
             return ""
 
         # Build the options string
@@ -45,7 +44,6 @@ class TCPOptionsTest(ResponseTest):
                 option_string += "S"
 
         option_string = option_string.upper()
-        print(f"TCP Options (O) String: {option_string}")
         return option_string
 
 class O1Test(TCPOptionsTest):

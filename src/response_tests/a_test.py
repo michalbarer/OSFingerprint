@@ -16,7 +16,6 @@ class TCPAcknowledgmentNumberTest(ResponseTest):
         probe_sequence_number = self.response_data.get("probe_sequence_number")
 
         if response_ack_number is None or probe_sequence_number is None:
-            print("Insufficient data: Acknowledgment or sequence number missing.")
             return None
 
         if response_ack_number == 0:
@@ -28,5 +27,4 @@ class TCPAcknowledgmentNumberTest(ResponseTest):
         else:
             result = "O"
 
-        print(f"TCP Acknowledgment Number (A) Result: {result}")
         return result

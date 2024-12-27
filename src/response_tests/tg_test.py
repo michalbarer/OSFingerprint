@@ -15,16 +15,13 @@ class IPInitialTTLGuessTest(ResponseTest):
         observed_ttl = icmp_response["ttl"] if icmp_response else None
 
         if observed_ttl is None:
-            print("No observed TTL available, unable to guess initial TTL.")
             return None
 
-        # Define common initial TTL values used by systems
+        # Common initial TTL values
         common_ttl_values = [32, 64, 128, 255]
 
         for ttl in common_ttl_values:
             if observed_ttl <= ttl:
-                print(f"Guessed Initial TTL (TG): {ttl}")
                 return ttl
 
-        print("Guessed Initial TTL (TG): 255")
         return 255

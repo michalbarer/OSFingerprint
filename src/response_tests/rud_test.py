@@ -16,7 +16,6 @@ class IntegrityReturnedUDPDataTest(ResponseTest):
         udp_payload = self.response_data.get("udp_payload")
 
         if udp_payload is None:
-            print("No UDP payload data available for analysis.")
             return "I"
 
         if all(byte == 0x43 for byte in udp_payload.load) or len(udp_payload) == 0:
@@ -24,5 +23,4 @@ class IntegrityReturnedUDPDataTest(ResponseTest):
         else:
             result = "I"
 
-        print(f"Integrity of Returned UDP Data (RUD): {result}")
         return result

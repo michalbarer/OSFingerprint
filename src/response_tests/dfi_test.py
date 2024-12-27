@@ -9,7 +9,6 @@ class ICMPDontFragmentTest(ResponseTest):
     def analyze(self):
         icmp_responses = self.response_data.get("icmp_responses")
         if not icmp_responses or len(icmp_responses) != 2:
-            print("Insufficient ICMP responses for DFT analysis.")
             return None
 
         df_bit1 = icmp_responses[0].get("df", False)
@@ -26,5 +25,4 @@ class ICMPDontFragmentTest(ResponseTest):
         else:
             result = "O"
 
-        print(f"DFI Result: {result}")
         return result

@@ -93,13 +93,6 @@ class TCPSequenceProbe(Probe):
             "timestamp_vals": self.timestamp_vals
         }
 
-    def analyze_response(self):
-        for i, response in enumerate(self.responses, start=1):
-            if response:
-                print(f"TCP Sequence Probe {i}: {response.summary()}")
-            else:
-                print(f"TCP Sequence Probe {i} received no response.")
-
 
 class SEQProbe(TCPSequenceProbe):
     """ TCP Sequence Probe SEQ """

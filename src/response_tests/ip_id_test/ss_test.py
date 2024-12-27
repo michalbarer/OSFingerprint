@@ -24,18 +24,15 @@ class TCPAndICMPIPIDSequenceBooleanTest(ResponseTest):
     def analyze(self):
         # Ensure conditions for SS test are met
         if self.ii_result not in {"RI", "BI", "I"}:
-            print("SS test not performed: II test result is not RI, BI, or I")
             return None
 
         if self.ii_result != self.ti_result:
-            print("SS test not performed: TI result does not match II result")
             return None
 
         tcp_ip_ids = self.response_data.get("tcp_ip_ids")
         icmp_ip_ids = self.response_data.get("icmp_ip_ids")
 
         if len(tcp_ip_ids) < 2 or len(icmp_ip_ids) < 2:
-            print("Insufficient data for SS test")
             return None
 
         # Calculate average increment (avg) for TCP IP IDs
@@ -46,8 +43,6 @@ class TCPAndICMPIPIDSequenceBooleanTest(ResponseTest):
         last_tcp_id = tcp_ip_ids[-1]
 
         if first_icmp_id < (last_tcp_id + 3 * tcp_avg):
-            print("SS test result: S (Shared)")
             return "S"
         else:
-            print("SS test result: O (Other)")
             return "O"

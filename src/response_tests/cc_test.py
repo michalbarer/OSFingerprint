@@ -14,7 +14,6 @@ class ExplicitCongestionNotificationTest(ResponseTest):
         flags = self.response_data.get("flags")
 
         if not flags:
-            print("No flag data available, unable to determine ECN support.")
             return None
 
         if "E" in flags and "C" in flags:
@@ -26,5 +25,4 @@ class ExplicitCongestionNotificationTest(ResponseTest):
         else:
             result = "N"
 
-        print(f"Explicit Congestion Notification (CC) Result: {result}")
         return result

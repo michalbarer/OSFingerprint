@@ -11,6 +11,7 @@ class ICMPEchoProbe(Probe):
     """
     Sends the ICMP Echo (IE) probe for OS fingerprinting.
     """
+
     def __init__(self, target_ip):
         super().__init__(target_ip)
         self.probe_configs = [
@@ -68,10 +69,3 @@ class ICMPEchoProbe(Probe):
                 response_data["icmp_responses"].append({})
 
         return response_data
-
-    def analyze_response(self):
-        for i, response in enumerate(self.responses, start=1):
-            if response:
-                print(f"ICMP Echo Probe {i} Response: {response.summary()}")
-            else:
-                print(f"ICMP Echo Probe {i} received no response.")

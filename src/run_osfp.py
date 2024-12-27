@@ -56,13 +56,24 @@ def run_osfp(host: str, open_ports: List[int], closed_ports: List[int], skip_com
     for open_port in open_ports:
         click.echo(f'Running tests for open port {open_port} and closed port {closed_port}...')
         test_results = run_tests(host, open_port, closed_port)
-        click.echo(f'Test results for open port {open_port}: {json.dumps(test_results, indent=4, sort_keys=True)}')
 
         if test_results:
+            if verbose:
+                click.echo(f'Test results for open port {open_port}:')
+                print_nested_dict(test_results)
             os_scores.append(compare_results_to_db(test_results, 2*num_results))
 
     os_scores = _combine_scores(os_scores, num_results)
     click.echo(tabulate(os_scores, headers='keys', tablefmt='grid'))
+
+
+def print_nested_dict(nested_dict: dict):
+    for section, tests in nested_dict.items():
+        click.secho(f"\n{section}:", fg="cyan", bold=True)  # Section header
+        for key, value in tests.items():
+            click.secho(f"  {key}: ", fg="blue", nl=False)
+            click.secho(f"{value}", fg="green")
+    click.echo("\n")
 
 
 def _combine_scores(scores_data: List[dict], top: int = 10) -> pd.DataFrame:
@@ -95,6 +106,10 @@ def _combine_scores(scores_data: List[dict], top: int = 10) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
+    # run_osfp(
+    #     host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
+    # )
     run_osfp(
-        host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
+        host='10.100.102.38', open_ports=[4200], closed_ports=[21, 8000, 8080], skip_common_ports=False,
+        num_results=10, verbose=True
     )

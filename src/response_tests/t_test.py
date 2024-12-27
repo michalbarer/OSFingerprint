@@ -12,17 +12,19 @@ class IPInitialTTLTest(ResponseTest):
         """
         Analyzes the response to determine the initial TTL value.
         """
-        icmp_response = self.response_data.get("icmp_u1_response")
+        response_ttl = self.response_data.get("response_ttl")
         sent_ttl = self.response_data.get("sent_ttl")
 
-        if not icmp_response or "ttl" not in icmp_response:
+        if not response_ttl:
             return None
 
-        observed_ttl = icmp_response["ttl"]
-        hop_distance = sent_ttl - observed_ttl
+        hop_distance = sent_ttl - response_ttl
 
-        if hop_distance < 0:
+        if hop_distance < 0 or hop_distance > 255:
             return None
 
-        initial_ttl = observed_ttl + hop_distance
-        return initial_ttl
+        initial_ttl = response_ttl + hop_distance
+        if initial_ttl not in (64, 128, 255) and initial_ttl <= 255:
+            initial_ttl = (initial_ttl + 63) // 64 * 64
+
+        return initial_ttl if initial_ttl <= 255 else None

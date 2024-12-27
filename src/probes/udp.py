@@ -30,7 +30,7 @@ class UDPProbe(Probe):
         response_data = {
             "response_received": bool(self.response),
             "sent_ttl": self.sent_ttl,
-            "icmp_u1_response": None,
+            "response_ttl": None,
             "ip_total_length": None,
             "ip_id": None,
             "ip_checksum": self.sent_ip_chksum,
@@ -47,11 +47,10 @@ class UDPProbe(Probe):
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
                 response_data["flags"] = str(ip_layer.flags)
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["response_ttl"] = ip_layer.ttl
                 response_data["ip_total_length"] = ip_layer.len
                 response_data["ip_id"] = ip_layer.id
 
-            # Check if the response is an ICMP message (port unreachable)
             if self.response.haslayer(ICMP) and self.response.getlayer(ICMP).type == 3:
                 icmp_layer = self.response.getlayer(ICMP)
                 response_data["unused_field"] = icmp_layer.unused

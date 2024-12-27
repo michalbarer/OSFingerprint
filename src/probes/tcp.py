@@ -36,7 +36,7 @@ class TCPProbe(Probe):
             "flags": None,
             "df_flag_set": None,
             "sent_ttl": self.sent_ttl,
-            "icmp_u1_response": None,
+            "response_ttl": None,
             "response_sequence_number": None,
             "probe_sequence_number": self.seq,
             "response_ack_number": None,
@@ -54,7 +54,7 @@ class TCPProbe(Probe):
                 response_data["ip_id"] = self.response["IP"].id
             ip_layer = self.response.getlayer(IP)
             if ip_layer:
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["response_ttl"] = ip_layer.ttl
                 response_data["df_flag_set"] = ip_layer.flags.DF
             if TCP in self.response:
                 tcp_layer = self.response[TCP]

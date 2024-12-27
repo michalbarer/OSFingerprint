@@ -47,7 +47,7 @@ class ICMPEchoProbe(Probe):
             "icmp_responses": [],
             "response_received": any(self.responses),
             "sent_ttl": self.sent_ttl,
-            "icmp_u1_response": None,
+            "response_ttl": None,
         }
 
         for i, response in enumerate(self.responses):
@@ -63,8 +63,8 @@ class ICMPEchoProbe(Probe):
                     "response_code": icmp_layer.code if icmp_layer else None,
                 })
 
-                if not response_data["icmp_u1_response"]:
-                    response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                if not response_data["response_ttl"]:
+                    response_data["response_ttl"] = ip_layer.ttl
             else:
                 response_data["icmp_responses"].append({})
 

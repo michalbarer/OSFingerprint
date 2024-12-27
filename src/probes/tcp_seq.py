@@ -139,7 +139,7 @@ class T1Probe(TCPSequenceProbe):
             "ip": self.responses[0][IP] if self.responses[0] else None,
             "flags": None,
             "sent_ttl": self.sent_ttls[0],
-            "icmp_u1_response": None,
+            "response_ttl": None,
             "response_sequence_number": None,
             "probe_sequence_number": self.seq,
             "response_ack_number": None,
@@ -154,7 +154,7 @@ class T1Probe(TCPSequenceProbe):
         if self.responses[0]:
             ip_layer = self.responses[0].getlayer(IP)
             if ip_layer:
-                response_data["icmp_u1_response"] = {"ttl": ip_layer.ttl}
+                response_data["response_ttl"] = ip_layer.ttl
                 response_data["df_flag_set"] = ip_layer.flags.DF
             if TCP in self.responses[0]:
                 response = self.responses[0][TCP]

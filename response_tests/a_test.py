@@ -12,7 +12,6 @@ class TCPAcknowledgmentNumberTest(ResponseTest):
         """
         Analyzes the TCP acknowledgment number field and determines its relationship to the sequence number.
         """
-        # Retrieve acknowledgment and sequence numbers from the response data
         response_ack_number = self.response_data.get("response_ack_number")
         probe_sequence_number = self.response_data.get("probe_sequence_number")
 

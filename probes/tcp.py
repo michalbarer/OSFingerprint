@@ -61,15 +61,11 @@ class TCPProbe(Probe):
                 response_data["flags"] = str(tcp_layer.flags)
                 response_data["response_sequence_number"] = tcp_layer.seq
                 response_data["response_ack_number"] = tcp_layer.ack
-                response_data["data"] = bytes(tcp_layer.payload)  # Extract raw data
+                response_data["data"] = bytes(tcp_layer.payload)
                 response_data["tcp_window_size"] = tcp_layer.window
                 response_data["reserved_field"] = tcp_layer.reserved
-
-                # Extract the urgent pointer and check if the URG flag is set
                 response_data["urgent_pointer"] = tcp_layer.urgptr
                 response_data["urg_flag_set"] = "U" in str(tcp_layer.flags)
-
-                # Extract TCP options and add to response_data
                 response_data["tcp_options"] = tcp_layer.options
         return response_data
 

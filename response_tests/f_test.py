@@ -12,7 +12,6 @@ class TCPFlagsTest(ResponseTest):
         """
         Analyzes the TCP flags in the response and generates the F string.
         """
-        # Retrieve the flags from the response data
         flags = self.response_data.get("flags")
 
         if not flags:

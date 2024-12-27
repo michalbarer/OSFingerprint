@@ -14,7 +14,6 @@ class UnusedPortUnreachableFieldTest(ResponseTest):
         """
         Analyzes the last four bytes of the ICMP port unreachable message header.
         """
-        # Retrieve the last four bytes of the ICMP message header from the response data
         unused_field = self.response_data.get("unused_field")
 
         if unused_field is None:

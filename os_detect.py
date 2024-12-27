@@ -17,10 +17,6 @@ from response_tests import (
 from response_tests.response_test_mapping import probe_to_test_mapping
 
 
-# from core.utils.fp_utils import resolve_host
-# import validators
-
-
 def run_seq_probe_and_tests(target_ip, open_port, closed_port):
     seq_probe = SEQProbe(target_ip, open_port)
     seq_probe.send_probe()
@@ -101,32 +97,10 @@ def run_all_probes_and_tests(target_ip, open_port, closed_port):
         all_results[probe.__class__.__name__] = probe_results
     return all_results
 
-# def validate_host(host: str):  # todo - resolve url to ip address
-#   """
-#   Validates the host and returns the resolved IP address.
-#   :param host: the host to validate
-#   :return: the resolved IP address
-#   """
-#     if validators.domain(host):
-#         host = resolve_host(host)
-#     else:
-#         socket.inet_aton(host)
-#     return host
-
 
 def run_tests(target_ip: str, open_ports: list, closed_ports: list):
-    # target_ip = '45.33.32.156' # "scanme.nmap.org"
-    # target_ip = '10.100.102.7'
-    # open_port = 8080
-    # closed_port = 1234
-
-    # target_ip = "10.100.102.192"
-    # open_port = 8075
-    # closed_port = 1000
-    if open_ports:
-        open_port = open_ports[0]
-    if closed_ports:
-        closed_port = closed_ports[0]
+    open_port = open_ports[0]
+    closed_port = closed_ports[0]
     all_results = {}
 
     all_results.update(run_seq_probe_and_tests(target_ip, open_port, closed_port))

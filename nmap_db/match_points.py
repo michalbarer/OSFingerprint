@@ -1,6 +1,3 @@
-# todo: add here how to parse results and returned values
-# hex: gcd, ipl, isr, rd, sp, t, tg, un, w
-# both: rid, ripl, ruck, ts
 MATCH_POINTS = {
     "SEQProbe": {
         "SP": 25,

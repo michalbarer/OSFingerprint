@@ -12,11 +12,9 @@ class TCPISNRateTest(ResponseTest):
         self.max_isn_value = 2 ** 32
 
     def analyze(self):
-        # Retrieve ISNs and timestamps from the response data
         isns = self.response_data.get("isns")
         timestamps = self.response_data.get("timestamps")
 
-        # Check if we have enough data to analyze
         if not isns or not timestamps or len(isns) < 2 or len(timestamps) < 2:
             print("Insufficient data to analyze ISN rate.")
             return 0

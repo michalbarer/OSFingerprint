@@ -13,7 +13,6 @@ class TCPISNGCDTest(ResponseTest):
         self.max_isn_value = 2 ** 32
 
     def analyze(self):
-        # Retrieve ISNs from the response data
         isns = self.response_data.get("isns")
 
         if not isns or len(isns) < 2:
@@ -28,10 +27,8 @@ class TCPISNGCDTest(ResponseTest):
 
             # Handle wraparound
             if isn_diff < 0:
-                # Calculate the wraparound difference "up" and "down"
                 diff_up = isn_diff + self.max_isn_value
                 diff_down = -isn_diff
-                # Take the smaller absolute difference
                 isn_diff = min(diff_up, diff_down)
 
             diff1.append(abs(isn_diff))

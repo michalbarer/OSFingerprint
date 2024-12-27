@@ -6,7 +6,7 @@ class ResponseTest(ABC):
     Each test must implement its own `analyze` method.
     """
     def __init__(self, response_data):
-        self.response_data = response_data  # Data to analyze in the response
+        self.response_data = response_data
 
     @abstractmethod
     def analyze(self):

@@ -14,7 +14,6 @@ class TCPISNSequencePredictabilityTest(ResponseTest):
         self.max_isn_value = 2 ** 32
 
     def analyze(self):
-        # Retrieve ISNs and timestamps from the response data
         isns = self.response_data.get("isns")
         timestamps = self.response_data.get("timestamps")
 
@@ -30,7 +29,6 @@ class TCPISNSequencePredictabilityTest(ResponseTest):
         diff1 = []
         for i in range(1, len(isns)):
             isn_diff = isns[i] - isns[i - 1]
-            # If the difference is negative, assume wraparound and adjust
             if isn_diff < 0:
                 isn_diff += self.max_isn_value
             diff1.append(isn_diff)

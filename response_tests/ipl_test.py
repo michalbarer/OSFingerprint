@@ -12,7 +12,6 @@ class IPTotalLengthTest(ResponseTest):
         """
         Analyzes the port unreachable response to determine the IP total length.
         """
-        # Retrieve the IP total length from the response data
         ip_total_length = self.response_data.get("ip_total_length")
 
         if ip_total_length is None:

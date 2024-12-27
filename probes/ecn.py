@@ -64,8 +64,6 @@ class ExplicitCongestionNotificationProbe(Probe):
 
                 response_data["flags"] = str(tcp_layer.flags)
                 response_data["reserved_field"] = tcp_layer.reserved
-
-                # Extract the urgent pointer and check if the URG flag is set
                 response_data["urgent_pointer"] = tcp_layer.urgptr
                 response_data["urg_flag_set"] = "U" in str(tcp_layer.flags)
 

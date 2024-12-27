@@ -42,7 +42,6 @@ class TCPAndICMPIPIDSequenceBooleanTest(ResponseTest):
         tcp_id_diff = tcp_ip_ids[-1] - tcp_ip_ids[0]
         tcp_avg = tcp_id_diff / (len(tcp_ip_ids) - 1)
 
-        # Check the condition for shared sequence
         first_icmp_id = icmp_ip_ids[0]
         last_tcp_id = tcp_ip_ids[-1]
 

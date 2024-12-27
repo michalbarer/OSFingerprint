@@ -10,13 +10,12 @@ class TCPTimestampOptionTest(ResponseTest):
     """
 
     def analyze(self):
-        # Retrieve timestamp values (TSval) and the time elapsed between probes
-        timestamp_vals = self.response_data.get("timestamp_vals")  # List of TSval values from responses
-        timestamps = self.response_data.get("timestamps")  # List of timestamps for each probe
+        timestamp_vals = self.response_data.get("timestamp_vals")
+        timestamps = self.response_data.get("timestamps")
 
         if len(timestamp_vals) < 2:
             print("Insufficient data for TS test")
-            return "U"  # Unsupported if we don't have at least 2 responses with TSvals
+            return "U"
 
         if any(ts == 0 for ts in timestamp_vals):
             print("TS test result: 0 (Zero timestamp)")
@@ -28,7 +27,6 @@ class TCPTimestampOptionTest(ResponseTest):
             ts_diff = timestamp_vals[i] - timestamp_vals[i - 1]
             time_diff = timestamps[i] - timestamps[i - 1]
 
-            # Ensure no division by zero and avoid negative rates
             if time_diff > 0:
                 rate = ts_diff / time_diff
                 timestamp_rate.append(rate)
@@ -39,15 +37,14 @@ class TCPTimestampOptionTest(ResponseTest):
         # Step 3: Apply the specific range logic
         if avg_rate <= 5.66:
             print("TS test result: 1 (Frequency: 2 Hz)")
-            return 1  # Common for OSes with 2 Hz timestamp
+            return 1
         elif 70 <= avg_rate <= 150:
             print("TS test result: 7 (Frequency: 100 Hz)")
-            return 7  # Common for OSes with 100 Hz timestamp
+            return 7
         elif 150 <= avg_rate <= 350:
             print("TS test result: 8 (Frequency: 200 Hz)")
-            return 8  # Common for OSes with 200 Hz timestamp
+            return 8
         else:
-            # If the rate doesn't fall into the predefined ranges, calculate log base-2 of the average rate
             log_rate = round(math.log2(avg_rate))
             print(f"TS test result: {log_rate} (Logarithmic calculation of average rate)")
-            return log_rate  # Return log of rate if it's outside the predefined ranges
+            return log_rate

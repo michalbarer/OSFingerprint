@@ -1,5 +1,4 @@
 import random
-from sys import flags
 
 from scapy.layers.inet import IP, UDP, ICMP, IPerror, UDPerror
 from scapy.sendrecv import sr1
@@ -11,6 +10,7 @@ class UDPProbe(Probe):
     """
     Sends the UDP (U1) probe to a closed port.
     """
+
     def send_probe(self):
         ip_packet = IP(dst=self.target_ip, id=1042)
         udp_packet = UDP(dport=self.target_port, sport=random.randint(60000, 65535))
@@ -67,7 +67,6 @@ class UDPProbe(Probe):
                 response_data["returned_ip_id"] = ip_error_layer.id
                 response_data["returned_ip_checksum"] = ip_error_layer.chksum
 
-        # todo: check how to return data for RIPCK, RUCK, RUD
         return response_data
 
     def analyze_response(self):

@@ -13,7 +13,7 @@ def parse_nmap_os_db(file_path):
     :return: Dictionary containing the parsed data.
     """
     os_db = {}
-    current_fingerprint = None  # Tracks the currently parsed fingerprint
+    current_fingerprint = None
 
     # Precompiled regex patterns for efficiency
     range_pattern = re.compile(r"^([0-9A-Fa-f]+)-([0-9A-Fa-f]+)$")  # Matches ranges like '6A-BE'
@@ -90,12 +90,10 @@ def parse_nmap_os_db(file_path):
 
 # Example usage:
 if __name__ == "__main__":
-    file_path = "nmap-os-db.txt"  # Replace with the actual file path
+    file_path = "nmap-os-db.txt"
     os_data = parse_nmap_os_db(file_path)
 
-    # Print the parsed dictionary
     import pprint
-
     pprint.pprint(os_data)
 
     python_file_path = "parsed_nmap_os_db.py"

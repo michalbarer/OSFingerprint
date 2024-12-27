@@ -11,10 +11,8 @@ class ExplicitCongestionNotificationTest(ResponseTest):
         """
         Analyzes the ECN probe response to determine CC value.
         """
-        # Retrieve the SYN/ACK flags from the response data
         flags = self.response_data.get("flags")
 
-        # Ensure that flags data is available
         if not flags:
             print("No flag data available, unable to determine ECN support.")
             return None

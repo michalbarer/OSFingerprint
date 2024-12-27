@@ -23,7 +23,7 @@ class IntegrityReturnedUDPChecksumTest(ResponseTest):
         if returned_udp_checksum == udp_checksum:
             result = "G"
         else:
-            result = udp_checksum  # Return the actual checksum value
+            result = udp_checksum
 
         print(f"Integrity of Returned Probe UDP Checksum Value (RUCK): {result}")
         return result

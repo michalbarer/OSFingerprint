@@ -30,13 +30,13 @@ class ICMPResponseCodeTest(ResponseTest):
 
         # Determine the CD value based on Table 8.7
         if response_code_1 == 0 and response_code_2 == 0:
-            result = "Z"  # Both code values are zero
+            result = "Z"
         elif response_code_1 == probe_code_1 and response_code_2 == probe_code_2:
-            result = "S"  # Both codes match their respective probe codes
+            result = "S"
         elif response_code_1 == response_code_2 and response_code_1 != 0:
-            result = f"{response_code_1}"  # Both codes are the same non-zero value
+            result = f"{response_code_1}"
         else:
-            result = "O"  # Any other combination
+            result = "O"
 
         print(f"ICMP Response Code (CD) Value: {result}")
         return result

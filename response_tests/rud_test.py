@@ -20,9 +20,9 @@ class IntegrityReturnedUDPDataTest(ResponseTest):
             return "I"
 
         if all(byte == 0x43 for byte in udp_payload.load) or len(udp_payload) == 0:
-            result = "G"  # Good data
+            result = "G"
         else:
-            result = "I"  # Invalid data
+            result = "I"
 
         print(f"Integrity of Returned UDP Data (RUD): {result}")
         return result

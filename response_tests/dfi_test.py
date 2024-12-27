@@ -16,13 +16,13 @@ class ICMPDontFragmentTest(ResponseTest):
         df_bit2 = icmp_responses[1].get("df", False)
 
         if not df_bit1 and not df_bit2:
-            result = "N"  # Neither response has the DF bit set
+            result = "N"
         elif df_bit1 == df_bit2:
-            result = "S"  # Both responses echo the DF value of the probe
+            result = "S"
         elif df_bit1 and df_bit2:
-            result = "Y"  # Both of the DF bits are set
+            result = "Y"
         else:
-            result = "O"  # Both responses have the DF bit toggled
+            result = "O"
 
         print(f"DFI Result: {result}")
         return result

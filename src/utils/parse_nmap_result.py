@@ -1,19 +1,14 @@
-# todo - remove after we match nmap's results
 
-def format_input(input_str):
+def format_input(nmap_res: str) -> str:
 
     # Remove 'OS:' from each row
-    input_str = input_str.replace('OS:', '')
+    nmap_res = nmap_res.replace('OS:', '')
 
-    # Find the index of "SEQ"
-    index = input_str.find("SEQ")
-
-    # Trim the string to exclude anything before that index
+    index = nmap_res.find("SEQ")
     if index != -1:
-        input_str = input_str[index:]
+        nmap_res = nmap_res[index:]
 
-    # Split the input into lines
-    lines = input_str.splitlines()
+    lines = nmap_res.splitlines()
 
     # Remove lines before "SEQ"
     filtered_lines = []
@@ -24,10 +19,9 @@ def format_input(input_str):
         if start_adding:
             filtered_lines.append(line)
 
-    # Join the lines and replace closing brackets with closing brackets followed by a newline
-    formatted_str = ''.join(filtered_lines).replace(')', ')\n')
-
-    return formatted_str
+    # Join lines
+    formatted_nmap_res = ''.join(filtered_lines).replace(')', ')\n')
+    return formatted_nmap_res
 
 
 # This is the output of: sudo nmap -sS -T4 -O -d nmap.scanme.org

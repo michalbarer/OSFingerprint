@@ -1,7 +1,7 @@
 from typing import Dict
 
-from nmap_db.db_names_mapping import test_names_mapping, probes_mapping
-from nmap_db.match_points import MATCH_POINTS
+from src.nmap_db.db_names_mapping import test_names_mapping, probes_mapping
+from src.nmap_db.match_points import MATCH_POINTS
 import re
 
 

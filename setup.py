@@ -7,11 +7,11 @@ setup(
     include_package_data=True,
     install_requires=[
         'click',
-        'scapy',
+        'scapy'
     ],
     entry_points={
         'console_scripts': [
-            'osfp = utils.cli:os_fingerprint',
+            'osfp = src.cli:os_fingerprint',
         ],
     },
 )

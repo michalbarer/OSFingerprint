@@ -1,6 +1,6 @@
 from typing import Dict
 
-from src.nmap_db.db_names_mapping import test_names_mapping, probes_mapping
+from src.nmap_db.db_names_mapping import TEST_NAMES_MAPPING, PROBES_MAPPING
 from src.nmap_db.match_points import MATCH_POINTS
 import re
 
@@ -114,8 +114,8 @@ def calculate_os_score(probe_results, db) -> Dict[str, float]:
         # Iterate through all tests in the probe results
         for probe, tests in probe_results.items():
             for test_name, test_result in tests.items():
-                db_test_name = test_names_mapping[test_name]
-                db_probe = probes_mapping[probe]
+                db_test_name = TEST_NAMES_MAPPING[test_name]
+                db_probe = PROBES_MAPPING[probe]
                 if db_test_name in os_data['Tests'][db_probe]:
                     max_score += MATCH_POINTS[probe][db_test_name]
                     os_score += compare_result(probe, db_test_name, test_result, os_data['Tests'][db_probe][db_test_name])

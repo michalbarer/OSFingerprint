@@ -1,6 +1,6 @@
 import re
 
-from src.nmap_db.db_names_mapping import test_names_mapping, probes_mapping
+from src.nmap_db.db_names_mapping import TEST_NAMES_MAPPING, PROBES_MAPPING
 from src.utils.parsers import hex_str_int
 
 
@@ -99,7 +99,7 @@ def find_differences(dict1, dict2):
 
 def main(desired_fp: str, nmap_result: str, osfp_result: dict):
     formatted_str = format_input(nmap_result)
-    nmap_dict = parse_and_convert(formatted_str, probes_mapping, test_names_mapping)
+    nmap_dict = parse_and_convert(formatted_str, PROBES_MAPPING, TEST_NAMES_MAPPING)
 
     diff = find_differences(nmap_dict, osfp_result)
     return diff

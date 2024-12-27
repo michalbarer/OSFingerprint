@@ -1,4 +1,4 @@
-test_names_mapping = {
+TEST_NAMES_MAPPING = {
     "TCPAcknowledgmentNumberTest": "A",
     "ExplicitCongestionNotificationTest": "CC",
     "ICMPResponseCodeTest": "CD",
@@ -42,7 +42,7 @@ test_names_mapping = {
     "TCPIIDTI": "TI",
 }
 
-probes_mapping = {
+PROBES_MAPPING = {
     "SEQProbe": "SEQ",
     "OPSProbe": "OPS",
     "WINProbe": "WIN",

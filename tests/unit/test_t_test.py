@@ -32,7 +32,7 @@ def test_analyze_negative_hop_distance():
 
 def test_analyze_valid_ttl():
     response_data = {
-        "icmp_u1_response": {"ttl": 50},
+        "response_ttl": 50,
         "sent_ttl": 64
     }
     test = IPInitialTTLTest(response_data)
@@ -42,7 +42,7 @@ def test_analyze_valid_ttl():
 
 def test_analyze_valid_ttl_with_hop_distance():
     response_data = {
-        "icmp_u1_response": {"ttl": 30},
+        "response_ttl": 30,
         "sent_ttl": 64
     }
     test = IPInitialTTLTest(response_data)

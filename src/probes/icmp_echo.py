@@ -19,6 +19,7 @@ class ICMPEchoProbe(Probe):
         ]
         self.responses = []
         self.ip_ids = []
+        self.probe_df_flags = []
 
     def send_probe(self):
         ip_id = random.randint(0, 65534)
@@ -31,6 +32,7 @@ class ICMPEchoProbe(Probe):
             packet = ip_packet / icmp_packet / payload
 
             self.sent_ttl = packet[IP].ttl
+            self.probe_df_flags.append(packet[IP].flags.DF)
             response = sr1(packet, timeout=2, verbose=0)
             if response and IP in response:
                 self.ip_ids.append(response[IP].id)
@@ -54,6 +56,7 @@ class ICMPEchoProbe(Probe):
 
                 response_data["icmp_responses"].append({
                     "df": ip_layer.flags.DF,
+                    "probe_df": self.probe_df_flags[i],
                     "ttl": ip_layer.ttl,
                     "probe_code": self.probe_configs[i]["code"],
                     "response_code": icmp_layer.code if icmp_layer else None,

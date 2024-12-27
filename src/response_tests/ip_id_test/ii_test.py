@@ -1,6 +1,6 @@
 from typing import List
 
-from response_tests.ip_id_test.base_ip_id_test import IPIDSequenceTest
+from src.response_tests.ip_id_test.base_ip_id_test import IPIDSequenceTest
 
 
 class ICMPIIDII(IPIDSequenceTest):

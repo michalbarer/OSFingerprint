@@ -1,20 +1,19 @@
-from nmap_db.parsed_nmap_os_db import os_db
-from nmap_db.query_db import calculate_os_score
-from probes import T1Probe, T2Probe, T3Probe
-from probes.ecn import ExplicitCongestionNotificationProbe
-from probes.icmp_echo import ICMPEchoProbe
-from probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe
-from probes.tcp_seq import SEQProbe, OPSProbe, WINProbe
-from probes.udp import UDPProbe
-from response_tests import (
-    TCPISNGCDTest,
-    TCPISNSequencePredictabilityTest,
-    TCPIIDTI,
-    TCPIIDCI,
-    ICMPIIDII,
-    TCPAndICMPIPIDSequenceBooleanTest
-)
-from response_tests.response_test_mapping import probe_to_test_mapping
+from src.probes.ecn import ExplicitCongestionNotificationProbe
+from src.probes.icmp_echo import ICMPEchoProbe
+from src.probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe, T2Probe, T3Probe
+from src.probes.tcp_seq import SEQProbe, OPSProbe, WINProbe, T1Probe
+from src.probes.udp import UDPProbe
+
+from src.response_tests.gcd_test import TCPISNGCDTest
+from src.response_tests.ip_id_test.ci_test import TCPIIDCI
+from src.response_tests.ip_id_test.ii_test import ICMPIIDII
+from src.response_tests.ip_id_test.ss_test import TCPAndICMPIPIDSequenceBooleanTest
+from src.response_tests.ip_id_test.ti_test import TCPIIDTI
+from src.response_tests.sp_test import TCPISNSequencePredictabilityTest
+from src.response_tests.response_test_mapping import probe_to_test_mapping
+
+from src.nmap_db.query_db import calculate_os_score
+from src.nmap_db.parsed_nmap_os_db import OS_DB
 
 
 def run_seq_probe_and_tests(target_ip, open_port, closed_port):
@@ -112,6 +111,6 @@ def compare_results_to_db(results, top_results: int = 10):
     """
     Calculates the OS score for each OS in the database.
     """
-    os_scores = calculate_os_score(results, os_db)
+    os_scores = calculate_os_score(results, OS_DB)
     return sorted(os_scores.items(), key=lambda item: item[1], reverse=True)[:top_results]
 

@@ -4,7 +4,9 @@ from typing import List
 import click
 
 from os_detect import run_tests, compare_results_to_db
-from src.utils.port_scanner import port_scanner, logger
+from src.utils.port_scanner import port_scanner
+
+Logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option('--host', '-h', required=True, type=str, help='The target host (IP address).')
@@ -17,9 +19,9 @@ from src.utils.port_scanner import port_scanner, logger
 @click.option('--verbose', '-v', is_flag=True, default=False, help='Enable verbose mode.')
 def os_fingerprint(host, open_ports, closed_ports, start_port, end_port, time_limit, num_results, verbose):
     if verbose:
-        logger.setLevel(logging.INFO)
+        Logger.setLevel(logging.INFO)
     else:
-        logger.setLevel(logging.ERROR)
+        Logger.setLevel(logging.ERROR)
 
     port_range = range(start_port, end_port + 1)
     click.echo('Start scanning ports...')

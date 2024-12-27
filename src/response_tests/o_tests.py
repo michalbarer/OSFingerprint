@@ -1,6 +1,6 @@
 from typing import Optional
 
-from response_tests.base_response_test import ResponseTest
+from src.response_tests.base_response_test import ResponseTest
 
 
 class TCPOptionsTest(ResponseTest):

@@ -1,7 +1,7 @@
 from math import gcd
 from functools import reduce
 
-from response_tests.base_response_test import ResponseTest
+from src.response_tests.base_response_test import ResponseTest
 
 
 class TCPISNGCDTest(ResponseTest):

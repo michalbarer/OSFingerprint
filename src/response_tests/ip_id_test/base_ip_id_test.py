@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import List, Optional
 
-from response_tests.base_response_test import ResponseTest
+from src.response_tests.base_response_test import ResponseTest
 
 def classify_ipid_sequence(ip_ids: List[int]) -> Optional[str]:
     """

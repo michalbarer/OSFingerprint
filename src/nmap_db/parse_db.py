@@ -1,6 +1,6 @@
 import re
 
-from src.utils import hex_str_int, NotHexadecimalError
+from src.utils.parsers import hex_str_int, NotHexadecimalError
 
 
 def parse_nmap_os_db(file_path):

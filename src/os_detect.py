@@ -1,3 +1,5 @@
+from random import randint
+
 from src.probes.ecn import ExplicitCongestionNotificationProbe
 from src.probes.icmp_echo import ICMPEchoProbe
 from src.probes.tcp import T4Probe, T5Probe, T6Probe, T7Probe, T2Probe, T3Probe
@@ -99,10 +101,9 @@ def run_all_probes_and_tests(target_ip, open_port, closed_port):
 
 def run_tests(target_ip: str, open_ports: list, closed_ports: list):
     open_port = open_ports[0]
-    if closed_ports:
-        closed_port = closed_ports[0]
-    all_results = {}
+    closed_port = closed_ports[0] if closed_ports else randint(1024, 65535)
 
+    all_results = {}
     all_results.update(run_seq_probe_and_tests(target_ip, open_port, closed_port))
     all_results.update(run_all_probes_and_tests(target_ip, open_port, closed_port))
 

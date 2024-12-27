@@ -1,16 +1,78 @@
 import logging
 import random
-import time
-from typing import Optional, List
+from typing import List, Optional
 
 from scapy.layers.inet import IP, TCP
 from scapy.sendrecv import sr1
 
 Logger = logging.getLogger(__name__)
 
+COMMON_PORTS = {
+    20: "FTP",
+    21: "FTP",
+    22: "SSH",
+    23: "Telnet",
+    25: "SMTP",
+    53: "DNS",
+    67: "DHCP Server",
+    68: "DHCP Client",
+    69: "TFTP",
+    80: "HTTP",
+    110: "POP3",
+    111: "RPCBIND",
+    119: "NNTP",
+    123: "NTP",
+    135: "MSRPC",
+    137: "NetBIOS Name Service",
+    138: "NetBIOS Datagram Service",
+    139: "NetBIOS Session Service",
+    143: "IMAP",
+    161: "SNMP",
+    162: "SNMP Trap",
+    194: "IRC",
+    443: "HTTPS",
+    445: "SMB",
+    465: "SMTPS",
+    514: "Syslog",
+    587: "SMTP",
+    631: "IPP",
+    993: "IMAPS",
+    995: "POP3S",
+    1080: "SOCKS Proxy",
+    1194: "OpenVPN",
+    1433: "MSSQL",
+    1521: "Oracle Database",
+    1723: "PPTP",
+    1812: "RADIUS Authentication",
+    1813: "RADIUS Accounting",
+    2049: "NFS",
+    3306: "MySQL",
+    3389: "RDP",
+    3690: "Subversion (SVN)",
+    4333: "mSQL",
+    5432: "PostgreSQL",
+    5500: "VNC",
+    5631: "pcAnywhere",
+    5900: "VNC",
+    5984: "CouchDB",
+    6379: "Redis",
+    8000: "HTTP Dev Server",
+    8080: "HTTP Proxy",
+    8443: "HTTPS Alternate",
+    8888: "HTTP Alternate",
+    9200: "Elasticsearch",
+    9300: "Elasticsearch Node Communication",
+    11211: "Memcached",
+    27017: "MongoDB",
+    27018: "MongoDB Shard",
+    27019: "MongoDB Config Server",
+    50000: "SAP",
+    50070: "Hadoop HDFS"
+}
+
 def port_scanner(host: str,
-                 # open_ports: List[int], closed_ports: List[int],
-                 start_port: Optional[int], end_port: Optional[int], time_limit: int = 30):
+                 open_ports: Optional[List[int]] = None,
+                 closed_ports: Optional[List[int]] = None) -> tuple:
     """
     A port scanner with a time limit.
 
@@ -18,29 +80,21 @@ def port_scanner(host: str,
         host (str): the host
         open_ports (list): list of open ports
         closed_ports (list): list of closed ports
-        start_port (int): start of the port range
-        end_port (int): end of the port range
-        time_limit (int): time limit for the scan in seconds. Default is 30 seconds.
     Returns:
         tuple: A tuple of lists containing open and closed ports.
     """
-    # ports_to_scan = open_ports + closed_ports
-    ports_to_scan = []
+    if not open_ports:
+        open_ports = []
+    if not closed_ports:
+        closed_ports = []
+
+    ports_to_scan = open_ports + closed_ports
+    ports_to_scan += list(COMMON_PORTS.keys())
+
     validated_open_ports = []
     validated_closed_ports = []
 
-    if not start_port:
-        start_port = 0
-    if not end_port:
-        end_port = 65535
-
-    ports_to_scan += [*range(start_port, end_port + 1)]
-    start_time = time.time()
-
     for port in ports_to_scan:
-        if time.time() - start_time > time_limit:
-            Logger.warning("Time limit exceeded. Returning results found so far.")
-            break
 
         src_port = random.randint(1025, 65534)
         resp = sr1(
@@ -54,15 +108,3 @@ def port_scanner(host: str,
                 validated_closed_ports.append(port)
 
     return validated_open_ports, validated_closed_ports
-
-
-if __name__ == "__main__":
-    host = "10.100.102.7"
-    start_port = 8070
-    end_port = 8090
-    limit = 30
-
-    result = port_scanner(host, range(start_port, end_port), limit)
-
-    print(f"Open Ports: {result[0]}")
-    print(f"Closed Ports: {result[1]}")

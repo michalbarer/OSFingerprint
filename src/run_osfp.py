@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import List
 
 import click
@@ -9,26 +10,37 @@ from src.utils.port_scanner import port_scanner
 Logger = logging.getLogger(__name__)
 
 @click.command()
-@click.option('--host', '-h', required=True, type=str, help='The target host (IP address).')
-# @click.option('--open-ports', '-op', required=False, type=List[int], help='List of open ports.')
-# @click.option('--closed-ports', '-cp', required=False, type=List, help='List of closed ports.')
-@click.option('--start-port', '-sp', required=False, type=click.IntRange(0, 65535), help='Start of the port range.')
-@click.option('--end-port', '-ep', required=False, type=click.IntRange(0, 65535), help='End of the port range.')
-@click.option('--time-limit', '-l', default=30, type=int, help='Time limit for the port scan in seconds (default: 30).')
-@click.option('--num-results', '-n', default=10, type=int, help='Number of top results to show (default: 10).')
+@click.option('--host', '-h', required=True, type=click.STRING, help='The target host (IP address).')
+@click.option('--open-ports', '-op', required=False, type=click.INT, multiple=True, help='List of open ports.')
+@click.option('--closed-ports', '-cp', required=False, type=click.INT, multiple=True, help='List of closed ports.')
+@click.option('--num-results', '-n', default=10, type=click.INT, help='Number of top results to show (default: 10).')
 @click.option('--verbose', '-v', is_flag=True, default=False, help='Enable verbose mode.')
-def os_fingerprint(host, start_port, end_port, time_limit, num_results, verbose):
+def os_fingerprint(host, open_ports, closed_ports, num_results, verbose):
+    open_ports = list(open_ports)
+    closed_ports = list(closed_ports)
+    run_osfp(host, open_ports, closed_ports, num_results, verbose)
+
+
+def run_osfp(host: str, open_ports: List[int], closed_ports: List[int], num_results: int = 10, verbose: bool = False):
     if verbose:
         Logger.setLevel(logging.INFO)
     else:
         Logger.setLevel(logging.ERROR)
 
+    port_scan_start_time = time.time()
     click.echo('Start scanning ports...')
-    result = port_scanner(host, start_port, end_port, time_limit)
-    open_ports, closed_ports = result
+    result = port_scanner(host, open_ports, closed_ports)
+    elapsed_time = time.time() - port_scan_start_time
+    click.echo(f'Done scanning ports in {elapsed_time:.2f} seconds...')
+
+    validated_open_ports, validated_closed_ports = result
+    if verbose:
+        click.echo(f'Open ports: {validated_open_ports}')
+        click.echo(f'Closed ports: {validated_closed_ports}')
+
     click.echo('Done scanning ports...')
 
-    if not open_ports and not closed_ports:
+    if not validated_open_ports and not validated_closed_ports:
         click.secho("No ports found.", fg='red')
         raise click.Abort()
 
@@ -46,3 +58,8 @@ def os_fingerprint(host, start_port, end_port, time_limit, num_results, verbose)
         click.secho(f"Top {num_results} matching Operating Systems:")
         for os, score in os_scores:
             click.secho(f"{os}: {score}")
+
+if __name__ == '__main__':
+    run_osfp(
+        host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], num_results=10, verbose=False
+    )

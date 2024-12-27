@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 from random import randint
@@ -53,7 +54,9 @@ def run_osfp(host: str, open_ports: List[int], closed_ports: List[int], skip_com
 
     os_scores = []
     for open_port in open_ports:
+        click.echo(f'Running tests for open port {open_port} and closed port {closed_port}...')
         test_results = run_tests(host, open_port, closed_port)
+        click.echo(f'Test results for open port {open_port}: {json.dumps(test_results, indent=4, sort_keys=True)}')
 
         if test_results:
             os_scores.append(compare_results_to_db(test_results, 2*num_results))
@@ -93,5 +96,5 @@ def _combine_scores(scores_data: List[dict], top: int = 10) -> pd.DataFrame:
 
 if __name__ == '__main__':
     run_osfp(
-        host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=False
+        host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
     )

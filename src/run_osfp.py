@@ -105,10 +105,10 @@ def _combine_scores(scores_data: List[dict], top: int = 10) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    # run_osfp(
-    #     host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
-    # )
     run_osfp(
-        host='10.100.102.38', open_ports=[4200], closed_ports=[21, 8000, 8080], skip_common_ports=False,
-        num_results=10, verbose=True
+        host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
     )
+    # run_osfp(
+    #     host='10.100.102.38', open_ports=[4200], closed_ports=[21, 8000, 8080], skip_common_ports=False,
+    #     num_results=10, verbose=True
+    # )

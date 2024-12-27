@@ -18,7 +18,7 @@ class IntegrityReturnedUDPDataTest(ResponseTest):
         if udp_payload is None:
             return "I"
 
-        if all(byte == 0x43 for byte in udp_payload.load) or len(udp_payload) == 0:
+        if len(udp_payload) == 0 or all(byte == 0x43 for byte in udp_payload.load):
             result = "G"
         else:
             result = "I"

@@ -8,7 +8,8 @@ from scapy.sendrecv import sr1
 
 Logger = logging.getLogger(__name__)
 
-def port_scanner(host: str, open_ports: List[int], closed_ports: List[int],
+def port_scanner(host: str,
+                 # open_ports: List[int], closed_ports: List[int],
                  start_port: Optional[int], end_port: Optional[int], time_limit: int = 30):
     """
     A port scanner with a time limit.
@@ -23,7 +24,8 @@ def port_scanner(host: str, open_ports: List[int], closed_ports: List[int],
     Returns:
         tuple: A tuple of lists containing open and closed ports.
     """
-    ports_to_scan = open_ports + closed_ports
+    # ports_to_scan = open_ports + closed_ports
+    ports_to_scan = []
     validated_open_ports = []
     validated_closed_ports = []
 
@@ -32,7 +34,7 @@ def port_scanner(host: str, open_ports: List[int], closed_ports: List[int],
     if not end_port:
         end_port = 65535
 
-    ports_to_scan += list(range(start_port, end_port + 1))
+    ports_to_scan += [*range(start_port, end_port + 1)]
     start_time = time.time()
 
     for port in ports_to_scan:

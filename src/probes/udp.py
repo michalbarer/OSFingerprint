@@ -3,7 +3,7 @@ import random
 from scapy.layers.inet import IP, UDP, ICMP, IPerror, UDPerror
 from scapy.sendrecv import sr1
 
-from probes.base_probe import Probe
+from src.probes.base_probe import Probe
 
 
 class UDPProbe(Probe):

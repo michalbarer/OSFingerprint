@@ -4,7 +4,7 @@ import time
 from scapy.layers.inet import IP, ICMP
 from scapy.sendrecv import sr1
 
-from probes.base_probe import Probe
+from src.probes.base_probe import Probe
 
 
 class ICMPEchoProbe(Probe):

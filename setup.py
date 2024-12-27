@@ -11,7 +11,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'osfp = src.cli:os_fingerprint',
+            'osfp = src.run_osfp:os_fingerprint',
         ],
     },
 )

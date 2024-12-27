@@ -3,7 +3,7 @@ from random import randint
 from scapy.layers.inet import IP, TCP
 from scapy.sendrecv import sr1
 
-from probes.base_probe import Probe
+from src.probes.base_probe import Probe
 
 
 class ExplicitCongestionNotificationProbe(Probe):

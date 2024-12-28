@@ -1,7 +1,7 @@
 import logging
 import time
 from random import randint
-from typing import List
+from typing import List, Optional
 
 import click
 import pandas as pd
@@ -27,7 +27,8 @@ def os_fingerprint(host, open_ports, closed_ports, skip_common_ports ,limit_open
     run_osfp(host, open_ports, closed_ports, skip_common_ports ,limit_open_ports, num_results, verbose)
 
 
-def run_osfp(host: str, open_ports: List[int], closed_ports: List[int], skip_common_ports=False, limit_open_ports: int = 3, num_results: int = 10, verbose: bool = False):
+def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Optional[List[int]] = None,
+             skip_common_ports=False, limit_open_ports: int = 3, num_results: int = 10, verbose: bool = False):
     if verbose:
         Logger.setLevel(logging.INFO)
     else:

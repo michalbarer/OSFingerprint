@@ -92,7 +92,7 @@ def port_scanner(host: str,
 
     ports_to_scan = open_ports + closed_ports
 
-    if not skip_common_ports and open_ports and closed_ports:
+    if not skip_common_ports or (len(open_ports) == 0 and len(closed_ports) == 0):
         ports_to_scan += list(COMMON_PORTS.keys())
 
     validated_open_ports = []

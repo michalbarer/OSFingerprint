@@ -11,6 +11,7 @@ setup(
         'more_itertools',
         'pandas',
         'tabulate',
+        'emoji'
     ],
     entry_points={
         'console_scripts': [

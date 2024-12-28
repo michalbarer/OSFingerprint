@@ -17,6 +17,9 @@ from src.nmap_db.parsed_nmap_os_db import OS_DB
 
 
 def run_seq_probe_and_tests(target_ip, open_port, closed_port):
+    """
+    Runs SEQ probe and tests on the target IP.
+    """
     seq_probe = SEQProbe(target_ip, open_port)
     seq_probe.send_probe()
     seq_response_data = seq_probe.get_response_data()
@@ -68,6 +71,9 @@ def run_seq_probe_and_tests(target_ip, open_port, closed_port):
 
 
 def run_all_probes_and_tests(target_ip, open_port, closed_port):
+    """
+    Runs all except SEC probes and tests on the target IP.
+    """
     probes = [
         OPSProbe(target_ip, open_port),
         WINProbe(target_ip, open_port),
@@ -98,6 +104,9 @@ def run_all_probes_and_tests(target_ip, open_port, closed_port):
 
 
 def run_tests(target_ip: str, open_port: int, closed_port: int):
+    """
+    Runs all probes and tests on the target IP.
+    """
     all_results = {}
     all_results.update(run_seq_probe_and_tests(target_ip, open_port, closed_port))
     all_results.update(run_all_probes_and_tests(target_ip, open_port, closed_port))

@@ -105,6 +105,9 @@ def compare_result(probe: str, test_name: str, test_result, db_result) -> int:
 
 
 def calculate_os_score(probe_results, db) -> Dict[str, float]:
+    """
+    Calculates the OS score for each OS in the database.
+    """
     os_scores = {}
 
     for os_name, os_data in db.items():

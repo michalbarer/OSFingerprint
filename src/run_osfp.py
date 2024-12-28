@@ -34,7 +34,7 @@ def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Op
     else:
         Logger.setLevel(logging.ERROR)
 
-    with LoaderAnimation("Start scanning ports...", elapsed_time=True, end="Done scanning ports!"):
+    with LoaderAnimation("Start scanning ports...", elapsed_time=True, end="Done scanning ports!", to_exit=True, error="Failed to scan ports! Aborting..."):
         result = port_scanner(host, open_ports, closed_ports, skip_common_ports)
 
     validated_open_ports, validated_closed_ports = result
@@ -52,7 +52,8 @@ def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Op
     os_scores = []
     for open_port in open_ports:
         with LoaderAnimation(f'Running tests for open port {open_port} and closed port {closed_port}...',
-                             elapsed_time=True, end="Done running tests!"):
+                             elapsed_time=True, end="Done running tests!", to_exit=False, show_stacktrace=False,
+                             error=f"An error occurred while running tests for {open_port} and closed port {closed_port}"):
             test_results = run_tests(host, open_port, closed_port)
 
         if test_results:
@@ -61,8 +62,13 @@ def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Op
                 print_nested_dict(test_results)
             os_scores.append(compare_results_to_db(test_results, 2*num_results))
 
+    if not os_scores:
+        click.secho(f"Unable to run tests on host {host}, aborting...", fg='red')
+        raise click.Abort()
+
     with LoaderAnimation(f'Combining results...',
-                         elapsed_time=True, end="Done combining results!"):
+                         elapsed_time=True, end="Done combining results!",
+                         to_exit=True, show_stacktrace=False, error="An error occurred while combining results"):
         os_scores = _combine_scores(os_scores, num_results)
     click.echo(tabulate(os_scores, headers='keys', tablefmt='grid'))
 
@@ -71,8 +77,8 @@ def print_nested_dict(nested_dict: dict):
     for section, tests in nested_dict.items():
         click.secho(f"\n{section}:", fg="cyan", bold=True)  # Section header
         for key, value in tests.items():
-            click.secho(f"  {key}: ", fg="blue", nl=False)
-            click.secho(f"{value}", fg="green")
+            click.secho(f"  {key}: ", nl=False)
+            click.secho(f"{value}", fg="blue", bold=True)
     click.echo("\n")
 
 

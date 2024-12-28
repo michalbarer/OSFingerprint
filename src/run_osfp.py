@@ -55,11 +55,11 @@ def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Op
                              elapsed_time=True, end="Done running tests!"):
             test_results = run_tests(host, open_port, closed_port)
 
-            if test_results:
-                if verbose:
-                    click.echo(f'Test results for open port {open_port}:')
-                    print_nested_dict(test_results)
-                os_scores.append(compare_results_to_db(test_results, 2*num_results))
+        if test_results:
+            if verbose:
+                click.echo(f'Test results for open port {open_port}:')
+                print_nested_dict(test_results)
+            os_scores.append(compare_results_to_db(test_results, 2*num_results))
 
     with LoaderAnimation(f'Combining results...',
                          elapsed_time=True, end="Done combining results!"):

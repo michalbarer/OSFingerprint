@@ -11,9 +11,9 @@ Ensure that **Python 3** is installed on your machine.
 ## Installation  
 1. Download the **osfp** tool from the [releases page](https://github.com/michalbarer/OSFingerprint/releases/download/v0.1.0/os_fingerprint-0.1.0-py3-none-any.whl).  
 2. Navigate to your download directory and install the package using:  
-   ```bash
-   pip install os_fingerprint-0.1.0-py3-none-any.whl
-    ```
+```bash
+pip install os_fingerprint-0.1.0-py3-none-any.whl
+ ```
 ---
 ## Usage:
 ```bash
@@ -67,10 +67,10 @@ osfp -h scanme.nmap.org -op 22 -op 80 -cp 21 -cp 8080 -s
 For contributing or modifying the tool, use the following steps:  
 
 ### 1. Install dependencies:  
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 ### 2. Install the package in editable mode:  
-   ```bash
-   pip install --editable .
-   ```
+```bash
+pip install --editable .
+```

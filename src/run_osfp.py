@@ -9,6 +9,7 @@ from more_itertools import take
 from tabulate import tabulate
 
 from src.os_detect import run_tests, compare_results_to_db
+from src.utils.animations import LoaderAnimation
 from src.utils.port_scanner import port_scanner
 
 Logger = logging.getLogger(__name__)
@@ -34,11 +35,8 @@ def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Op
     else:
         Logger.setLevel(logging.ERROR)
 
-    port_scan_start_time = time.time()
-    click.echo('Start scanning ports...')
-    result = port_scanner(host, open_ports, closed_ports, skip_common_ports)
-    elapsed_time = time.time() - port_scan_start_time
-    click.echo(f'Done scanning ports in {elapsed_time:.2f} seconds...')
+    with LoaderAnimation("Start scanning ports...", elapsed_time=True, end="Done scanning ports!"):
+        result = port_scanner(host, open_ports, closed_ports, skip_common_ports)
 
     validated_open_ports, validated_closed_ports = result
     if verbose:
@@ -54,16 +52,19 @@ def run_osfp(host: str, open_ports: Optional[List[int]] = None, closed_ports: Op
 
     os_scores = []
     for open_port in open_ports:
-        click.echo(f'Running tests for open port {open_port} and closed port {closed_port}...')
-        test_results = run_tests(host, open_port, closed_port)
+        with LoaderAnimation(f'Running tests for open port {open_port} and closed port {closed_port}...',
+                             elapsed_time=True, end="Done running tests!"):
+            test_results = run_tests(host, open_port, closed_port)
 
-        if test_results:
-            if verbose:
-                click.echo(f'Test results for open port {open_port}:')
-                print_nested_dict(test_results)
-            os_scores.append(compare_results_to_db(test_results, 2*num_results))
+            if test_results:
+                if verbose:
+                    click.echo(f'Test results for open port {open_port}:')
+                    print_nested_dict(test_results)
+                os_scores.append(compare_results_to_db(test_results, 2*num_results))
 
-    os_scores = _combine_scores(os_scores, num_results)
+    with LoaderAnimation(f'Combining results...',
+                         elapsed_time=True, end="Done combining results!"):
+        os_scores = _combine_scores(os_scores, num_results)
     click.echo(tabulate(os_scores, headers='keys', tablefmt='grid'))
 
 
@@ -106,14 +107,14 @@ def _combine_scores(scores_data: List[dict], top: int = 10) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    # run_osfp(
-    #     host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
-    # )
+    run_osfp(
+        host='scanme.nmap.org', open_ports=[22, 80], closed_ports=[21, 8000, 8080], skip_common_ports=True, num_results=10, verbose=True
+    )
     # run_osfp(
     #     host='10.100.102.38', open_ports=[4200], closed_ports=[21, 8000, 8080], skip_common_ports=False,
     #     num_results=10, verbose=True
     # )
-    run_osfp(
-        host='ynet.co.il', skip_common_ports=False,
-        num_results=10, verbose=True
-    )
+    # run_osfp(
+    #     host='ynet.co.il', skip_common_ports=False,
+    #     num_results=10, verbose=True
+    # )
